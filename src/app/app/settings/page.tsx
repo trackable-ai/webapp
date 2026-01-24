@@ -1,6 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -12,9 +19,108 @@ import {
   CheckCircle,
   ExternalLink,
   AlertTriangle,
+  Loader2,
+  RefreshCw,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { formatDistanceToNow } from "date-fns";
+
+interface GmailStatus {
+  connected: boolean;
+  email: string | null;
+  lastSynced: string | null;
+}
 
 export default function SettingsPage() {
+  const [gmailStatus, setGmailStatus] = useState<GmailStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [disconnecting, setDisconnecting] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const supabase = createClient();
+
+  useEffect(() => {
+    fetchGmailStatus();
+  }, []);
+
+  const fetchGmailStatus = async () => {
+    try {
+      const response = await fetch("/api/gmail/sync");
+      const data = await response.json();
+      setGmailStatus(data);
+    } catch {
+      setGmailStatus({ connected: false, email: null, lastSynced: null });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConnect = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/api/auth/callback?next=/app/settings`,
+        scopes:
+          "openid email profile https://www.googleapis.com/auth/gmail.readonly",
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
+  };
+
+  const handleDisconnect = async () => {
+    setDisconnecting(true);
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get token and revoke it
+      const { data: tokens } = await supabase
+        .from("user_gmail_tokens")
+        .select("access_token")
+        .eq("user_id", user.id)
+        .single();
+
+      if (tokens?.access_token) {
+        await fetch(
+          `https://oauth2.googleapis.com/revoke?token=${tokens.access_token}`,
+          { method: "POST" }
+        ).catch(() => {});
+      }
+
+      // Delete from database
+      await supabase.from("user_gmail_tokens").delete().eq("user_id", user.id);
+
+      setGmailStatus({ connected: false, email: null, lastSynced: null });
+    } catch (error) {
+      console.error("Disconnect error:", error);
+    } finally {
+      setDisconnecting(false);
+    }
+  };
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const response = await fetch("/api/gmail/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ maxResults: 20 }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        await fetchGmailStatus();
+      }
+    } catch (error) {
+      console.error("Sync error:", error);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -39,31 +145,77 @@ export default function SettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-status-delivered/10">
-                  <CheckCircle className="h-5 w-5 text-status-delivered" />
-                </div>
-                <div>
-                  <p className="font-medium">john@gmail.com</p>
-                  <p className="text-sm text-muted-foreground">
-                    Connected · Last synced 5 min ago
-                  </p>
-                </div>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
-              <Button variant="outline" size="sm">
-                Disconnect
-              </Button>
-            </div>
+            ) : gmailStatus?.connected ? (
+              <>
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-status-delivered/10">
+                      <CheckCircle className="h-5 w-5 text-status-delivered" />
+                    </div>
+                    <div>
+                      <p className="font-medium">{gmailStatus.email}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Connected
+                        {gmailStatus.lastSynced &&
+                          ` · Last synced ${formatDistanceToNow(new Date(gmailStatus.lastSynced), { addSuffix: true })}`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSync}
+                      disabled={syncing}
+                    >
+                      {syncing ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                      )}
+                      Sync
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDisconnect}
+                      disabled={disconnecting}
+                    >
+                      {disconnecting ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : null}
+                      Disconnect
+                    </Button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+                <Mail className="h-10 w-10 text-muted-foreground mb-4" />
+                <h3 className="font-medium mb-1">Gmail not connected</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Connect your Gmail to automatically find order confirmation
+                  emails.
+                </p>
+                <Button onClick={handleConnect}>
+                  <Mail className="mr-2 h-4 w-4" />
+                  Connect Gmail
+                </Button>
+              </div>
+            )}
 
             <div className="rounded-lg bg-muted/50 p-4">
               <p className="text-sm text-muted-foreground">
-                <strong>What we access:</strong> Read-only access to your emails to
-                find order confirmations and shipping notifications.
+                <strong>What we access:</strong> Read-only access to your emails
+                to find order confirmations and shipping notifications.
               </p>
               <p className="mt-2 text-sm text-muted-foreground">
-                <strong>What we don&apos;t do:</strong> We never modify, delete, or
-                send emails on your behalf.
+                <strong>What we don&apos;t do:</strong> We never modify, delete,
+                or send emails on your behalf.
               </p>
             </div>
           </CardContent>
@@ -138,7 +290,9 @@ export default function SettingsPage() {
             <div className="space-y-3 text-sm">
               <div className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-status-delivered mt-0.5" />
-                <span>Your email data is never sold or shared with advertisers</span>
+                <span>
+                  Your email data is never sold or shared with advertisers
+                </span>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-status-delivered mt-0.5" />
