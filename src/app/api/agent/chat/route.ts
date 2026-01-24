@@ -1,43 +1,11 @@
-import { google } from "@ai-sdk/google";
-import { streamText, stepCountIs, zodSchema, type Tool } from "ai";
-import { z } from "zod/v4";
-import { buildSystemPrompt } from "@/lib/gemini/prompts";
-import { mockOrders } from "@/data";
-import { fetchTracking } from "@/lib/tracking/mock-tracking-api";
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
-
-const trackShipmentTool: Tool = {
-  description:
-    "Look up the real-time tracking status for a package. Call this function when a user provides a tracking number or asks about shipment status. You MUST extract the tracking number from the user message and pass it as the trackingNumber parameter.",
-  inputSchema: zodSchema(
-    z.object({
-      trackingNumber: z.string().describe(
-        "The tracking number to look up (e.g., 1Z999AA10123456784, 9400111899223456789012)"
-      ),
-      carrier: z.enum(["USPS", "UPS", "FedEx", "DHL", "Amazon"]).optional().describe(
-        "The shipping carrier if known. Will be auto-detected if not provided."
-      ),
-    })
-  ),
-  execute: async ({ trackingNumber, carrier }: { trackingNumber: string; carrier?: "USPS" | "UPS" | "FedEx" | "DHL" | "Amazon" }) => {
-    console.log("trackShipment called with args:", JSON.stringify({ trackingNumber, carrier }, null, 2));
-    if (!trackingNumber) {
-      return { error: "No tracking number provided" };
-    }
-    console.log(`Tracking shipment: ${trackingNumber}, carrier: ${carrier}`);
-    const result = await fetchTracking(trackingNumber, carrier);
-    console.log("Tracking result:", JSON.stringify(result, null, 2));
-    return result;
-  },
-};
+import { cookies } from "next/headers";
+import { createSSETransformStream } from "@/lib/trackable-agent/sse-transformer";
 
 export const maxDuration = 30;
 
-// Test endpoint
+const TRACKABLE_API_URL = process.env.TRACKABLE_API_URL || "http://127.0.0.1:8000";
+
+// Health check endpoint
 export async function GET() {
   return new Response(JSON.stringify({ status: "ok" }), {
     headers: { "Content-Type": "application/json" },
@@ -47,73 +15,107 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log("Received body:", JSON.stringify(body, null, 2));
 
-    // Convert UI messages to model messages format
-    const messages: Message[] = (body.messages || []).map(
-      (msg: { role: string; parts?: { type: string; text: string }[]; content?: string }) => ({
-        role: msg.role as "user" | "assistant",
-        content:
-          msg.parts
-            ?.filter((p: { type: string }) => p.type === "text")
-            .map((p: { text: string }) => p.text)
-            .join("") || msg.content || "",
-      })
-    );
+    // Extract the last user message
+    const messages = body.messages || [];
+    const lastMessage = messages[messages.length - 1];
+    if (!lastMessage || lastMessage.role !== "user") {
+      return new Response(JSON.stringify({ error: "No user message found" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
-    console.log("Converted messages:", JSON.stringify(messages, null, 2));
+    // Extract text content from message
+    const messageText =
+      lastMessage.parts
+        ?.filter((p: { type: string }) => p.type === "text")
+        .map((p: { text: string }) => p.text)
+        .join("") ||
+      lastMessage.content ||
+      "";
 
-    // Check if API key is set
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      console.error("GOOGLE_GENERATIVE_AI_API_KEY is not set");
+    if (!messageText.trim()) {
+      return new Response(JSON.stringify({ error: "Empty message" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Get session ID from cookie
+    const cookieStore = await cookies();
+    const sessionId = cookieStore.get("chat_session_id")?.value;
+
+    // TODO: Get user ID from Supabase auth when implemented
+    const userId = "default_user";
+
+    // Build request to trackable-agent
+    const trackableRequest = {
+      message: messageText,
+      user_id: userId,
+      ...(sessionId && { session_id: sessionId }),
+    };
+
+    console.log("Calling trackable-agent:", TRACKABLE_API_URL, trackableRequest);
+
+    // Call trackable-agent streaming endpoint
+    const response = await fetch(`${TRACKABLE_API_URL}/api/chat/stream`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // TODO: Add GCP Identity Token for production
+        // "Authorization": `Bearer ${await getIdentityToken()}`,
+      },
+      body: JSON.stringify(trackableRequest),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Trackable-agent error:", response.status, errorText);
       return new Response(
-        JSON.stringify({ error: "API key not configured" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
+        JSON.stringify({ error: `Trackable API error: ${response.status}` }),
+        { status: response.status, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Build system prompt with current order context
-    const systemPrompt = buildSystemPrompt(mockOrders);
+    if (!response.body) {
+      return new Response(JSON.stringify({ error: "No response body" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
-    const result = streamText({
-      model: google("gemini-2.5-flash"),
-      system: systemPrompt,
-      messages,
-      stopWhen: stepCountIs(5),
-      toolChoice: "auto",
-      onStepFinish: ({ toolCalls, toolResults, finishReason, text }) => {
-        console.log("Step finished:", {
-          finishReason,
-          hasText: !!text,
-          textLength: text?.length,
-          toolCalls: toolCalls?.length,
-          toolResults: toolResults?.length,
-        });
-        if (finishReason === "tool-calls") {
-          console.log("Tool results being sent back to model for continuation...");
-        }
-      },
-      onFinish: ({ text, finishReason, steps }) => {
-        console.log("Stream finished:", {
-          finishReason,
-          textLength: text?.length,
-          totalSteps: steps?.length,
-        });
-      },
-      tools: {
-        // Google Search for return policies, merchant info, etc.
-        googleSearch: google.tools.googleSearch({}),
-        // Package tracking tool
-        trackShipment: trackShipmentTool,
-      },
+    // Transform SSE stream from trackable-agent format to Vercel AI SDK format
+    const transformStream = createSSETransformStream();
+
+    const transformedStream = response.body.pipeThrough(transformStream);
+
+    // Create response with session cookie if new session
+    const responseHeaders = new Headers({
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
     });
 
-    return result.toUIMessageStreamResponse();
+    // Note: We can't set cookies during streaming, so we'll handle session
+    // persistence differently - the session ID is sent in the SSE stream
+    // and the client can store it
+
+    return new Response(transformedStream, { headers: responseHeaders });
   } catch (error) {
     console.error("Chat API error:", error);
-    return new Response(
-      JSON.stringify({ error: String(error) }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: String(error) }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
+}
+
+// Endpoint to clear session
+export async function DELETE() {
+  const cookieStore = await cookies();
+  cookieStore.delete("chat_session_id");
+  return new Response(JSON.stringify({ message: "Session cleared" }), {
+    headers: { "Content-Type": "application/json" },
+  });
 }

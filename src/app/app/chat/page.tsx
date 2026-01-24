@@ -84,7 +84,7 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
         <div>
           <h1 className="font-semibold">Ask Trackable</h1>
           <p className="text-sm text-muted-foreground">
-            Powered by Google Gemini
+            Your AI shopping assistant
           </p>
         </div>
       </div>
