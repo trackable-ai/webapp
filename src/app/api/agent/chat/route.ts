@@ -56,9 +56,8 @@ export async function POST(request: Request) {
       messages,
       stopWhen: stepCountIs(5),
       toolChoice: "auto",
-      onStepFinish: ({ stepType, toolCalls, toolResults, finishReason, text }) => {
+      onStepFinish: ({ toolCalls, toolResults, finishReason, text }) => {
         console.log("Step finished:", {
-          stepType,
           finishReason,
           hasText: !!text,
           textLength: text?.length,
