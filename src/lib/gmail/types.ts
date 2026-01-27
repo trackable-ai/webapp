@@ -1,15 +1,16 @@
+export interface GmailMessagePart {
+  mimeType?: string;
+  body?: { data?: string };
+  parts?: GmailMessagePart[];
+}
+
 export interface GmailMessage {
   id: string;
   threadId: string;
   labelIds: string[];
   snippet: string;
-  payload: {
+  payload: GmailMessagePart & {
     headers: Array<{ name: string; value: string }>;
-    body?: { data?: string };
-    parts?: Array<{
-      mimeType: string;
-      body?: { data?: string };
-    }>;
   };
   internalDate: string;
 }

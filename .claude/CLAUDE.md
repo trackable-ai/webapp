@@ -38,6 +38,7 @@ src/
 - Supabase for auth & database
 - Google Gemini + Vercel AI SDK for AI features
 - Zustand for client state management
+- API routes must include Supabase user auth check (except public endpoints like health checks)
 
 # API Backend
 

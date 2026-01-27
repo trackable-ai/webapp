@@ -1,14 +1,12 @@
+import { createClient } from "@/lib/supabase/server";
 import { createSSETransformStream } from "@/lib/trackable-agent/sse-transformer";
+import { NextResponse } from "next/server";
 
 export const maxDuration = 30;
 
-const TRACKABLE_API_URL = process.env.TRACKABLE_API_URL || "http://127.0.0.1:8000";
-
-// Health check endpoint
-export async function GET() {
-  return new Response(JSON.stringify({ status: "ok" }), {
-    headers: { "Content-Type": "application/json" },
-  });
+const TRACKABLE_API_URL = process.env.TRACKABLE_API_URL;
+if (!TRACKABLE_API_URL) {
+  throw new Error("TRACKABLE_API_URL environment variable is required");
 }
 
 interface MessagePart {
@@ -23,6 +21,14 @@ interface Message {
 }
 
 export async function POST(request: Request) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const messages: Message[] = body.messages || [];
@@ -61,36 +67,42 @@ export async function POST(request: Request) {
       });
     }
 
-    // TODO: Get user ID from Supabase auth when implemented
-    const userId = "default_user";
-
     // Build OpenAI-compatible request
     const openaiRequest = {
       model: "gemini-2.5-flash",
       messages: validMessages,
       stream: true,
-      user: userId,
+      user: user?.id,
     };
 
-    console.log("Calling trackable-agent:", `${TRACKABLE_API_URL}/api/v1/chat/completions`);
+    console.log(
+      "Calling trackable-agent:",
+      `${TRACKABLE_API_URL}/api/v1/chat/completions`,
+    );
 
     // Call trackable-agent OpenAI-compatible endpoint
-    const response = await fetch(`${TRACKABLE_API_URL}/api/v1/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // TODO: Add GCP Identity Token for production
-        // "Authorization": `Bearer ${await getIdentityToken()}`,
+    const response = await fetch(
+      `${TRACKABLE_API_URL}/api/v1/chat/completions`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // TODO: Add service to service auth (webapp-api to trackable-agent) for production
+          // "Authorization": `Bearer ${await getIdentityToken()}`,
+        },
+        body: JSON.stringify(openaiRequest),
       },
-      body: JSON.stringify(openaiRequest),
-    });
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Trackable-agent error:", response.status, errorText);
       return new Response(
         JSON.stringify({ error: `Trackable API error: ${response.status}` }),
-        { status: response.status, headers: { "Content-Type": "application/json" } }
+        {
+          status: response.status,
+          headers: { "Content-Type": "application/json" },
+        },
       );
     }
 
@@ -121,9 +133,48 @@ export async function POST(request: Request) {
   }
 }
 
-// Endpoint to clear session (kept for potential future use)
+// Endpoint to clear chat session
 export async function DELETE() {
-  return new Response(JSON.stringify({ message: "Session cleared" }), {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const response = await fetch(
+      `${TRACKABLE_API_URL}/api/v1/chat/sessions?user=${encodeURIComponent(user.id)}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          // TODO: Add service to service auth for production
+        },
+      },
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Failed to clear session:", response.status, errorText);
+      return NextResponse.json(
+        { error: `Failed to clear session: ${response.status}` },
+        { status: response.status },
+      );
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Clear session error:", error);
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
+}
+
+// Health check endpoint
+export async function GET() {
+  return new Response(JSON.stringify({ status: "ok" }), {
     headers: { "Content-Type": "application/json" },
   });
 }

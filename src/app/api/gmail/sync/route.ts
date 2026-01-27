@@ -1,7 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { getGmailClient } from "@/lib/gmail/client";
 import { NextResponse } from "next/server";
-import type { GmailMessage, ParsedOrderEmail } from "@/lib/gmail/types";
+import type {
+  GmailMessage,
+  GmailMessagePart,
+  ParsedOrderEmail,
+} from "@/lib/gmail/types";
 
 const ORDER_KEYWORDS = [
   "order confirmation",
@@ -14,6 +18,63 @@ const ORDER_KEYWORDS = [
   "tracking number",
 ];
 
+// Recursively find text content in MIME parts
+function findTextBody(
+  part: GmailMessagePart,
+  preferredType: "text/plain" | "text/html" = "text/plain",
+): string {
+  // Direct body data - check if this part matches what we want
+  if (part.body?.data && part.mimeType === preferredType) {
+    return Buffer.from(part.body.data, "base64").toString("utf-8");
+  }
+
+  // For parts without mimeType (top-level), check if body has data
+  if (part.body?.data && !part.mimeType && !part.parts) {
+    return Buffer.from(part.body.data, "base64").toString("utf-8");
+  }
+
+  // Recurse into nested parts
+  if (part.parts) {
+    // First, look for the preferred type at this level
+    const preferred = part.parts.find((p) => p.mimeType === preferredType);
+    if (preferred?.body?.data) {
+      return Buffer.from(preferred.body.data, "base64").toString("utf-8");
+    }
+
+    // Recurse into multipart/* containers
+    for (const subPart of part.parts) {
+      if (subPart.mimeType?.startsWith("multipart/") || subPart.parts) {
+        const body = findTextBody(subPart, preferredType);
+        if (body) return body;
+      }
+    }
+  }
+
+  return "";
+}
+
+// Extract body, preferring text/plain but falling back to text/html
+function extractEmailBody(payload: GmailMessagePart): string {
+  // Try text/plain first
+  let body = findTextBody(payload, "text/plain");
+  if (body) return body;
+
+  // Fall back to text/html (strip tags for plain text)
+  body = findTextBody(payload, "text/html");
+  if (body) {
+    // Basic HTML tag stripping
+    return body
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  return "";
+}
+
 function parseOrderEmail(message: GmailMessage): ParsedOrderEmail {
   const headers = message.payload.headers;
   const getHeader = (name: string) =>
@@ -23,18 +84,10 @@ function parseOrderEmail(message: GmailMessage): ParsedOrderEmail {
   const from = getHeader("from") || "";
   const date = new Date(parseInt(message.internalDate));
 
-  // Extract body content
-  let body = "";
-  if (message.payload.body?.data) {
-    body = Buffer.from(message.payload.body.data, "base64").toString("utf-8");
-  } else if (message.payload.parts) {
-    const textPart = message.payload.parts.find(
-      (p) => p.mimeType === "text/plain"
-    );
-    if (textPart?.body?.data) {
-      body = Buffer.from(textPart.body.data, "base64").toString("utf-8");
-    }
-  }
+  console.log("Extracting body from:", message.payload);
+
+  // Extract body content (handles nested MIME structures)
+  const body = extractEmailBody(message.payload);
 
   return {
     messageId: message.id,
@@ -100,6 +153,7 @@ export async function POST(request: Request) {
         from: e.from,
         date: e.date,
         snippet: e.snippet,
+        rawBody: e.rawBody,
       })),
     });
   } catch (error) {
@@ -136,7 +190,7 @@ export async function GET() {
     console.error("Gmail status error:", error);
     return NextResponse.json(
       { error: "Failed to get status" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
