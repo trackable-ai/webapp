@@ -30,23 +30,21 @@ const suggestions = [
 export default function ChatPage() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // Create transport with custom API endpoint
   const transport = useMemo(
     () => new DefaultChatTransport({ api: "/api/agent/chat" }),
     []
   );
 
-  const { messages, sendMessage, status, error } =
-    useChat({
-      transport,
-      messages: [
-        {
-          id: "welcome",
-          role: "assistant",
-          parts: [
-            {
-              type: "text" as const,
-              text: `Hi there! I'm Trackable, your personal shopping assistant. I can help you with:
+  const { messages, sendMessage, status, error } = useChat({
+    transport,
+    messages: [
+      {
+        id: "welcome",
+        role: "assistant",
+        parts: [
+          {
+            type: "text" as const,
+            text: `Hi there! I'm Trackable, your personal shopping assistant. I can help you with:
 
 • **Tracking orders** - Check delivery status and ETAs
 • **Managing returns** - Understand policies and deadlines
@@ -54,11 +52,11 @@ export default function ChatPage() {
 • **Support** - Help contacting merchants
 
 I'm currently tracking 5 orders for you. What would you like to know?`,
-            },
-          ],
-        },
-      ] as UIMessage[],
-    });
+          },
+        ],
+      },
+    ] as UIMessage[],
+  });
 
   const isLoading = status === "streaming" || status === "submitted";
 

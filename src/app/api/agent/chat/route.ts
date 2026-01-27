@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { createSSETransformStream } from "@/lib/trackable-agent/sse-transformer";
 
 export const maxDuration = 30;
@@ -12,61 +11,78 @@ export async function GET() {
   });
 }
 
+interface MessagePart {
+  type: string;
+  text?: string;
+}
+
+interface Message {
+  role: string;
+  content?: string;
+  parts?: MessagePart[];
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const messages: Message[] = body.messages || [];
 
-    // Extract the last user message
-    const messages = body.messages || [];
-    const lastMessage = messages[messages.length - 1];
-    if (!lastMessage || lastMessage.role !== "user") {
-      return new Response(JSON.stringify({ error: "No user message found" }), {
+    if (messages.length === 0) {
+      return new Response(JSON.stringify({ error: "No messages provided" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    // Extract text content from message
-    const messageText =
-      lastMessage.parts
-        ?.filter((p: { type: string }) => p.type === "text")
-        .map((p: { text: string }) => p.text)
-        .join("") ||
-      lastMessage.content ||
-      "";
+    // Convert Vercel AI SDK message format to OpenAI format
+    const openaiMessages = messages.map((msg) => {
+      // Extract text content from parts if present (Vercel AI SDK format)
+      const content =
+        msg.parts
+          ?.filter((p) => p.type === "text")
+          .map((p) => p.text)
+          .join("") ||
+        msg.content ||
+        "";
 
-    if (!messageText.trim()) {
-      return new Response(JSON.stringify({ error: "Empty message" }), {
+      return {
+        role: msg.role as "system" | "user" | "assistant",
+        content,
+      };
+    });
+
+    // Filter out empty messages
+    const validMessages = openaiMessages.filter((msg) => msg.content.trim());
+
+    if (validMessages.length === 0) {
+      return new Response(JSON.stringify({ error: "No valid messages" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
-
-    // Get session ID from cookie
-    const cookieStore = await cookies();
-    const sessionId = cookieStore.get("chat_session_id")?.value;
 
     // TODO: Get user ID from Supabase auth when implemented
     const userId = "default_user";
 
-    // Build request to trackable-agent
-    const trackableRequest = {
-      message: messageText,
-      user_id: userId,
-      ...(sessionId && { session_id: sessionId }),
+    // Build OpenAI-compatible request
+    const openaiRequest = {
+      model: "gemini-2.5-flash",
+      messages: validMessages,
+      stream: true,
+      user: userId,
     };
 
-    console.log("Calling trackable-agent:", TRACKABLE_API_URL, trackableRequest);
+    console.log("Calling trackable-agent:", `${TRACKABLE_API_URL}/api/v1/chat/completions`);
 
-    // Call trackable-agent streaming endpoint
-    const response = await fetch(`${TRACKABLE_API_URL}/api/chat/stream`, {
+    // Call trackable-agent OpenAI-compatible endpoint
+    const response = await fetch(`${TRACKABLE_API_URL}/api/v1/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         // TODO: Add GCP Identity Token for production
         // "Authorization": `Bearer ${await getIdentityToken()}`,
       },
-      body: JSON.stringify(trackableRequest),
+      body: JSON.stringify(openaiRequest),
     });
 
     if (!response.ok) {
@@ -85,23 +101,17 @@ export async function POST(request: Request) {
       });
     }
 
-    // Transform SSE stream from trackable-agent format to Vercel AI SDK format
+    // Transform OpenAI SSE stream to Vercel AI SDK Data Stream format
     const transformStream = createSSETransformStream();
-
     const transformedStream = response.body.pipeThrough(transformStream);
 
-    // Create response with session cookie if new session
-    const responseHeaders = new Headers({
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
+    return new Response(transformedStream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
     });
-
-    // Note: We can't set cookies during streaming, so we'll handle session
-    // persistence differently - the session ID is sent in the SSE stream
-    // and the client can store it
-
-    return new Response(transformedStream, { headers: responseHeaders });
   } catch (error) {
     console.error("Chat API error:", error);
     return new Response(JSON.stringify({ error: String(error) }), {
@@ -111,10 +121,8 @@ export async function POST(request: Request) {
   }
 }
 
-// Endpoint to clear session
+// Endpoint to clear session (kept for potential future use)
 export async function DELETE() {
-  const cookieStore = await cookies();
-  cookieStore.delete("chat_session_id");
   return new Response(JSON.stringify({ message: "Session cleared" }), {
     headers: { "Content-Type": "application/json" },
   });

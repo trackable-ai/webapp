@@ -49,13 +49,15 @@ API backend is deployed on Google Cloud Run at api.usetrackable.ai, a local copy
 
 The chat UI connects to trackable-agent via `/api/agent/chat` proxy rather than directly. This proxy exists because:
 
-1. **Protocol adaptation**: Vercel AI SDK expects a specific SSE format (`start`, `text-delta`, `finish`), while trackable-agent uses a different format (`session`, `delta`, `done`). The proxy transforms between these via `src/lib/trackable-agent/sse-transformer.ts`.
+1. **Protocol adaptation**: Vercel AI SDK expects its Data Stream format (`start`, `text-delta`, `finish`), while trackable-agent uses OpenAI-compatible SSE format. The proxy transforms between these via `src/lib/trackable-agent/sse-transformer.ts`.
 
-2. **Session management**: Server-side cookie handling for chat session IDs.
+2. **Session management**: The backend manages sessions per-user via the `user` field in the OpenAI-compatible request format.
 
 3. **Auth tokens**: Placeholder for GCP Identity Token injection in production.
 
 4. **CORS simplicity**: Same-origin requests avoid cross-origin configuration.
+
+The backend exposes an OpenAI-compatible endpoint at `/api/v1/chat/completions` (see `docs/openapi.yaml` in trackable-agent repo).
 
 # Important Notes
 

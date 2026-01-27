@@ -1,28 +1,36 @@
 /**
- * Transforms SSE events from trackable-agent API to Vercel AI SDK UIMessageChunk format.
+ * Transforms SSE events from OpenAI-compatible API to Vercel AI SDK Data Stream format.
  *
- * trackable-agent events:
- * - session: { type: "session", session_id, user_id }
- * - delta: { type: "delta", content }
- * - done: { type: "done", full_response }
- * - error: { type: "error", message }
+ * OpenAI streaming format:
+ * - data: {"id":"chatcmpl-...","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
+ * - data: {"id":"chatcmpl-...","choices":[{"index":0,"delta":{"content":"Hello"},"finish_reason":null}]}
+ * - data: {"id":"chatcmpl-...","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}
+ * - data: [DONE]
  *
- * Vercel AI SDK UIMessageChunk events:
+ * Vercel AI SDK Data Stream format:
  * - start, start-step, text-start, text-delta, text-end, finish-step, finish
  */
 
-interface TrackableEvent {
-  type: "session" | "delta" | "done" | "error";
-  session_id?: string;
-  user_id?: string;
+interface OpenAIChunkDelta {
+  role?: string;
   content?: string;
-  full_response?: string;
-  message?: string;
 }
 
-export function createSSETransformStream(
-  onSessionId?: (sessionId: string) => void
-): TransformStream<Uint8Array, Uint8Array> {
+interface OpenAIChunkChoice {
+  index: number;
+  delta: OpenAIChunkDelta;
+  finish_reason: string | null;
+}
+
+interface OpenAIChunk {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: OpenAIChunkChoice[];
+}
+
+export function createSSETransformStream(): TransformStream<Uint8Array, Uint8Array> {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
   let buffer = "";
@@ -44,83 +52,66 @@ export function createSSETransformStream(
         const dataMatch = message.match(/^data:\s*(.+)$/m);
         if (!dataMatch) continue;
 
-        let event: TrackableEvent;
-        try {
-          event = JSON.parse(dataMatch[1]);
-        } catch {
-          console.error("Failed to parse SSE event:", dataMatch[1]);
+        const data = dataMatch[1].trim();
+
+        // Handle [DONE] signal
+        if (data === "[DONE]") {
+          if (started) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`));
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish-step" })}\n\n`));
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish", finishReason: "stop" })}\n\n`));
+          }
           continue;
         }
 
-        const chunks = transformEvent(event, started, textId, onSessionId);
-        if (!started && chunks.length > 0) {
-          started = true;
+        let openaiChunk: OpenAIChunk;
+        try {
+          openaiChunk = JSON.parse(data);
+        } catch {
+          console.error("Failed to parse OpenAI SSE chunk:", data);
+          continue;
         }
 
-        for (const uiChunk of chunks) {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify(uiChunk)}\n\n`));
+        const choice = openaiChunk.choices?.[0];
+        if (!choice) continue;
+
+        const delta = choice.delta;
+        const finishReason = choice.finish_reason;
+
+        // Emit start sequence on first content
+        if (!started && (delta.role || delta.content)) {
+          started = true;
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "start" })}\n\n`));
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "start-step" })}\n\n`));
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-start", id: textId })}\n\n`));
+        }
+
+        // Emit text delta
+        if (delta.content) {
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: "text-delta", id: textId, delta: delta.content })}\n\n`)
+          );
+        }
+
+        // Handle finish reason (alternative to [DONE])
+        if (finishReason && started) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`));
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish-step" })}\n\n`));
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: "finish", finishReason: finishReason })}\n\n`)
+          );
+          started = false; // Prevent duplicate finish on [DONE]
         }
       }
     },
 
     flush(controller) {
-      // Ensure we close properly if stream ends without done event
+      // Ensure we close properly if stream ends unexpectedly
       if (started) {
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`)
-        );
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`));
         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish-step" })}\n\n`));
-        controller.enqueue(
-          encoder.encode(
-            `data: ${JSON.stringify({ type: "finish", finishReason: "stop" })}\n\n`
-          )
-        );
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish", finishReason: "stop" })}\n\n`));
       }
     },
   });
-}
-
-function transformEvent(
-  event: TrackableEvent,
-  started: boolean,
-  textId: string,
-  onSessionId?: (sessionId: string) => void
-): object[] {
-  const chunks: object[] = [];
-
-  switch (event.type) {
-    case "session":
-      if (event.session_id && onSessionId) {
-        onSessionId(event.session_id);
-      }
-      // Emit start sequence
-      chunks.push({ type: "start" });
-      chunks.push({ type: "start-step" });
-      chunks.push({ type: "text-start", id: textId });
-      break;
-
-    case "delta":
-      if (!started) {
-        // If we get delta before session, emit start sequence first
-        chunks.push({ type: "start" });
-        chunks.push({ type: "start-step" });
-        chunks.push({ type: "text-start", id: textId });
-      }
-      if (event.content) {
-        chunks.push({ type: "text-delta", id: textId, delta: event.content });
-      }
-      break;
-
-    case "done":
-      chunks.push({ type: "text-end", id: textId });
-      chunks.push({ type: "finish-step" });
-      chunks.push({ type: "finish", finishReason: "stop" });
-      break;
-
-    case "error":
-      chunks.push({ type: "error", errorText: event.message || "Unknown error" });
-      break;
-  }
-
-  return chunks;
 }
