@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -6,8 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -70,6 +72,21 @@
   --color-agent-thinking: var(--agent-thinking);
   --color-agent-recommendation: var(--agent-recommendation);
   --color-agent-warning: var(--agent-warning);
+
+  /* Landing page colors */
+  --color-landing-primary: #3B82F6;
+  --color-landing-primary-light: #EFF6FF;
+  --color-landing-black: #0D0D0D;
+  --color-landing-gray-700: #7A7A7A;
+  --color-landing-gray-400: #B0B0B0;
+  --color-landing-border: #E8E8E8;
+  --color-landing-surface: #FAFAFA;
+  --color-landing-green-success: #10B981;
+  --color-landing-green-light: #ECFDF5;
+  --color-landing-amber-warning: #F59E0B;
+  --color-landing-amber-light: #FEF3C7;
+  --color-landing-purple: #8B5CF6;
+  --color-landing-purple-light: #F5F3FF;
 }
 
 :root {

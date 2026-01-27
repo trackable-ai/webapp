@@ -4362,6 +4362,1979 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "abQSQ",
+      "x": 6500,
+      "y": 380,
+      "name": "Landing Page",
+      "width": 1440,
+      "fill": "$--bg-page",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "SnVlc",
+          "name": "Header",
+          "width": "fill_container",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "$--border"
+          },
+          "padding": [
+            20,
+            64
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "FzumP",
+              "name": "headerLeft",
+              "gap": 48,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "b80SU",
+                  "name": "logo",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "M36AX",
+                      "name": "logoIcon",
+                      "width": 32,
+                      "height": 32,
+                      "fill": "$--primary",
+                      "cornerRadius": "$--radius-sm",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "ZtX0w",
+                          "name": "logoIconInner",
+                          "width": 18,
+                          "height": 18,
+                          "iconFontName": "package",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "xnat4",
+                      "name": "logoText",
+                      "fill": "$--black-primary",
+                      "content": "Trackable",
+                      "fontFamily": "$--font-heading",
+                      "fontSize": 20,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "H5V3U",
+                  "name": "nav",
+                  "gap": 32,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "otsvA",
+                      "name": "navFeatures",
+                      "fill": "$--gray-700",
+                      "content": "Features",
+                      "fontFamily": "$--font-body",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "o4YXh",
+                      "name": "navPricing",
+                      "fill": "$--gray-700",
+                      "content": "Pricing",
+                      "fontFamily": "$--font-body",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "NoYdi",
+                      "name": "navAbout",
+                      "fill": "$--gray-700",
+                      "content": "About",
+                      "fontFamily": "$--font-body",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "otcth",
+              "name": "headerRight",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "87xGd",
+                  "name": "loginBtn",
+                  "fill": "$--gray-700",
+                  "content": "Log in",
+                  "fontFamily": "$--font-body",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "mJhEJ",
+                  "type": "ref",
+                  "ref": "9FejO",
+                  "name": "getStartedBtn",
+                  "descendants": {
+                    "TCXbQ": {
+                      "iconFontName": "arrow-right"
+                    },
+                    "Ez2qo": {
+                      "content": "Get Started"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "nfL0r",
+          "name": "Hero",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            80,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "WuIyy",
+              "name": "heroContent",
+              "width": 800,
+              "layout": "vertical",
+              "gap": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Wlm2v",
+                  "name": "heroBadge",
+                  "fill": "$--primary-light",
+                  "cornerRadius": 100,
+                  "gap": 8,
+                  "padding": [
+                    8,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "2dl8j",
+                      "name": "heroBadgeIcon",
+                      "width": 14,
+                      "height": 14,
+                      "iconFontName": "sparkles",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "qoQPI",
+                      "name": "heroBadgeText",
+                      "fill": "$--primary",
+                      "content": "AI-Powered Shopping Agent",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Rzx70",
+                  "name": "heroHeadline",
+                  "fill": "$--black-primary",
+                  "textGrowth": "fixed-width",
+                  "width": 800,
+                  "content": "Never miss a return deadline again",
+                  "textAlign": "center",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 56,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "UoKc5",
+                  "name": "heroSubline",
+                  "fill": "$--gray-700",
+                  "textGrowth": "fixed-width",
+                  "width": 640,
+                  "content": "Trackable is your personal AI agent that manages everything after checkout. Track orders, monitor return windows, and get proactive recommendations — all automatically from your email.",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "iQN1Q",
+                  "name": "heroCTAs",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "NcsQX",
+                      "type": "ref",
+                      "ref": "9FejO",
+                      "name": "heroPrimaryBtn",
+                      "descendants": {
+                        "TCXbQ": {
+                          "iconFontName": "mail"
+                        },
+                        "Ez2qo": {
+                          "content": "Connect Gmail to Start",
+                          "fontSize": 15
+                        }
+                      }
+                    },
+                    {
+                      "id": "yQpd6",
+                      "type": "ref",
+                      "ref": "qEkcI",
+                      "name": "heroSecondaryBtn",
+                      "descendants": {
+                        "fyFeY": {
+                          "iconFontName": "arrow-right"
+                        },
+                        "XN7Up": {
+                          "content": "See How It Works",
+                          "fontSize": 15
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "y7sF5",
+              "name": "heroScreenshot",
+              "width": 1000,
+              "height": 560,
+              "fill": "$--bg-surface",
+              "cornerRadius": "$--radius-lg",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000015",
+                "offset": {
+                  "x": 0,
+                  "y": 24
+                },
+                "blur": 64,
+                "spread": -12
+              },
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "V4PlU",
+                  "name": "screenshotPlaceholder",
+                  "fill": "$--gray-400",
+                  "content": "Product Screenshot",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cwJPC",
+              "name": "heroTrust",
+              "layout": "vertical",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Wr54v",
+                  "name": "trustLabel",
+                  "fill": "$--gray-400",
+                  "content": "Post-purchase is broken for consumers",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "PxMft",
+                  "name": "trustLogos",
+                  "gap": 40,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wITAx",
+                      "name": "trustLogo1",
+                      "fill": "$--gray-400",
+                      "content": "20-30%",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 18,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ptsH6",
+                      "name": "trustLogo2",
+                      "fill": "$--gray-400",
+                      "content": "40%+",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 18,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GfyyW",
+                      "name": "trustLogo3",
+                      "fill": "$--gray-400",
+                      "content": "$B+",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 18,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "bOkGQ",
+                      "name": "trustLogo4",
+                      "fill": "$--gray-400",
+                      "content": "Lost",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 18,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZXJp6",
+          "name": "How It Works",
+          "width": "fill_container",
+          "fill": "$--bg-surface",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            80,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "slPWN",
+              "name": "howHeader",
+              "width": 600,
+              "layout": "vertical",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ImWGR",
+                  "name": "howLabel",
+                  "fill": "$--primary",
+                  "content": "HOW IT WORKS",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.5
+                },
+                {
+                  "type": "text",
+                  "id": "KQzBm",
+                  "name": "howHeadline",
+                  "fill": "$--black-primary",
+                  "content": "Get started in seconds",
+                  "textAlign": "center",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 40,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "TNKBK",
+                  "name": "howSubline",
+                  "fill": "$--gray-700",
+                  "content": "Your agent handles the rest",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pCpMK",
+              "name": "howSteps",
+              "width": "fill_container",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pdxrY",
+                  "name": "step1",
+                  "width": "fill_container",
+                  "fill": "$--bg-card",
+                  "cornerRadius": "$--radius-lg",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "YE7QK",
+                      "name": "step1Number",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$--primary-light",
+                      "cornerRadius": 100,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yIwes",
+                          "name": "step1Num",
+                          "fill": "$--primary",
+                          "content": "1",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 20,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "snhs8",
+                      "name": "step1Content",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WnUfe",
+                          "name": "step1Title",
+                          "fill": "$--black-primary",
+                          "content": "Connect Gmail",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 20,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "OtqKF",
+                          "name": "step1Desc",
+                          "fill": "$--gray-700",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Securely connect your Gmail account. We only read order-related emails — no write permissions, ever.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "9mJvN",
+                  "name": "step2",
+                  "width": "fill_container",
+                  "fill": "$--bg-card",
+                  "cornerRadius": "$--radius-lg",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "aEow9",
+                      "name": "step2Number",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$--primary-light",
+                      "cornerRadius": 100,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "g7gL9",
+                          "name": "step2Num",
+                          "fill": "$--primary",
+                          "content": "2",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 20,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "oVYos",
+                      "name": "step2Content",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "uJTrC",
+                          "name": "step2Title",
+                          "fill": "$--black-primary",
+                          "content": "Agent Discovers Orders",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 20,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "GnCns",
+                          "name": "step2Desc",
+                          "fill": "$--gray-700",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Your AI agent automatically finds and organizes all your purchases. No manual entry required.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "R9mlL",
+                  "name": "step3",
+                  "width": "fill_container",
+                  "fill": "$--bg-card",
+                  "cornerRadius": "$--radius-lg",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "3cPxe",
+                      "name": "step3Number",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$--primary-light",
+                      "cornerRadius": 100,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "on7cv",
+                          "name": "step3Num",
+                          "fill": "$--primary",
+                          "content": "3",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 20,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GlQlq",
+                      "name": "step3Content",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "okyLp",
+                          "name": "step3Title",
+                          "fill": "$--black-primary",
+                          "content": "Get Proactive Help",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 20,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "F7r15",
+                          "name": "step3Desc",
+                          "fill": "$--gray-700",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Receive alerts before return windows close, track shipments, and get guidance when you need it.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "neA2m",
+          "name": "Features",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            80,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "7iJzD",
+              "name": "featuresHeader",
+              "width": 600,
+              "layout": "vertical",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WK1VA",
+                  "name": "featuresLabel",
+                  "fill": "$--primary",
+                  "content": "AGENT CAPABILITIES",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1.5
+                },
+                {
+                  "type": "text",
+                  "id": "Ta0UH",
+                  "name": "featuresHeadline",
+                  "fill": "$--black-primary",
+                  "content": "Your AI agent that works for you",
+                  "textAlign": "center",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 40,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "oVpmx",
+                  "name": "featuresSubline",
+                  "fill": "$--gray-700",
+                  "content": "Trackable is not a dashboard — it's an intelligent agent that proactively manages your post-purchase experience.",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yXHM7",
+              "name": "featuresGrid",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ceD4E",
+                  "name": "featuresRow1",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "gOMKG",
+                      "name": "feature1",
+                      "width": "fill_container",
+                      "fill": "$--bg-surface",
+                      "cornerRadius": "$--radius-lg",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "padding": 28,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "92tZ0",
+                          "name": "feature1Icon",
+                          "width": 48,
+                          "height": 48,
+                          "fill": "$--primary-light",
+                          "cornerRadius": "$--radius-md",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "ZhRH4",
+                              "name": "feature1IconInner",
+                              "width": 24,
+                              "height": 24,
+                              "iconFontName": "map-pin",
+                              "iconFontFamily": "lucide",
+                              "fill": "$--primary"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "Mmmjr",
+                          "name": "feature1Title",
+                          "fill": "$--black-primary",
+                          "content": "Automatic Order Detection",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wvSKM",
+                          "name": "feature1Desc",
+                          "fill": "$--gray-700",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Connect your Gmail and watch as your agent discovers and organizes all your orders. No manual entry required.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ECVWi",
+                      "name": "feature2",
+                      "width": "fill_container",
+                      "fill": "$--bg-surface",
+                      "cornerRadius": "$--radius-lg",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "padding": 28,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "fhsWo",
+                          "name": "feature2Icon",
+                          "width": 48,
+                          "height": 48,
+                          "fill": "$--green-light",
+                          "cornerRadius": "$--radius-md",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "j5rKB",
+                              "name": "feature2IconInner",
+                              "width": 24,
+                              "height": 24,
+                              "iconFontName": "refresh-cw",
+                              "iconFontFamily": "lucide",
+                              "fill": "$--green-success"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "TK7sg",
+                          "name": "feature2Title",
+                          "fill": "$--black-primary",
+                          "content": "Return Window Tracking",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "4lZje",
+                          "name": "feature2Desc",
+                          "fill": "$--gray-700",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Never miss a return deadline. Your agent monitors every purchase and alerts you before windows close.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "2wmoi",
+                      "name": "feature3",
+                      "width": "fill_container",
+                      "fill": "$--bg-surface",
+                      "cornerRadius": "$--radius-lg",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "padding": 28,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "HhawX",
+                          "name": "feature3Icon",
+                          "width": 48,
+                          "height": 48,
+                          "fill": "$--purple-light",
+                          "cornerRadius": "$--radius-md",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "5iJn7",
+                              "name": "feature3IconInner",
+                              "width": 24,
+                              "height": 24,
+                              "iconFontName": "bot",
+                              "iconFontFamily": "lucide",
+                              "fill": "$--purple-return"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "zMG9h",
+                          "name": "feature3Title",
+                          "fill": "$--black-primary",
+                          "content": "Natural Language Chat",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "WiSPz",
+                          "name": "feature3Desc",
+                          "fill": "$--gray-700",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Just ask. \"Can I still return this?\" or \"What orders are arriving this week?\" Your agent understands.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "P3yUo",
+                  "name": "featuresRow2",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "8Mzau",
+                      "name": "feature4",
+                      "width": "fill_container",
+                      "fill": "$--bg-surface",
+                      "cornerRadius": "$--radius-lg",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "padding": 28,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "s1mHE",
+                          "name": "feature4Icon",
+                          "width": 48,
+                          "height": 48,
+                          "fill": "$--amber-light",
+                          "cornerRadius": "$--radius-md",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "ZXiGj",
+                              "name": "feature4IconInner",
+                              "width": 24,
+                              "height": 24,
+                              "iconFontName": "bell",
+                              "iconFontFamily": "lucide",
+                              "fill": "$--amber-warning"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "7R1WA",
+                          "name": "feature4Title",
+                          "fill": "$--black-primary",
+                          "content": "Proactive Alerts",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "o5BkV",
+                          "name": "feature4Desc",
+                          "fill": "$--gray-700",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Get notified about deliveries, return deadlines, and refund status. Your agent watches so you don't have to.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "rLNGC",
+                      "name": "feature5",
+                      "width": "fill_container",
+                      "fill": "$--bg-surface",
+                      "cornerRadius": "$--radius-lg",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "padding": 28,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "e4rDo",
+                          "name": "feature5Icon",
+                          "width": 48,
+                          "height": 48,
+                          "fill": "$--primary-light",
+                          "cornerRadius": "$--radius-md",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "DuOkC",
+                              "name": "feature5IconInner",
+                              "width": 24,
+                              "height": 24,
+                              "iconFontName": "chart-bar",
+                              "iconFontFamily": "lucide",
+                              "fill": "$--primary"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "seZBc",
+                          "name": "feature5Title",
+                          "fill": "$--black-primary",
+                          "content": "Policy Interpreter",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "YFTwR",
+                          "name": "feature5Desc",
+                          "fill": "$--gray-700",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Your agent reads return policies so you don't have to. Get clear guidance on eligibility and next steps.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RUVUO",
+                      "name": "feature6",
+                      "width": "fill_container",
+                      "fill": "$--bg-surface",
+                      "cornerRadius": "$--radius-lg",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "padding": 28,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "f59zR",
+                          "name": "feature6Icon",
+                          "width": 48,
+                          "height": 48,
+                          "fill": "$--green-light",
+                          "cornerRadius": "$--radius-md",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "QKROc",
+                              "name": "feature6IconInner",
+                              "width": 24,
+                              "height": 24,
+                              "iconFontName": "mail",
+                              "iconFontFamily": "lucide",
+                              "fill": "$--green-success"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "LUmdn",
+                          "name": "feature6Title",
+                          "fill": "$--black-primary",
+                          "content": "Gmail Integration",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "qx9FV",
+                          "name": "feature6Desc",
+                          "fill": "$--gray-700",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Securely connect your inbox. We only read order-related emails — no write access, no data selling, ever.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "0VpYP",
+          "name": "Social Proof",
+          "width": "fill_container",
+          "fill": "$--black-primary",
+          "layout": "vertical",
+          "gap": 64,
+          "padding": [
+            80,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "q89ze",
+              "name": "statsRow",
+              "gap": 64,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Rg4GG",
+                  "name": "stat1",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QnpAU",
+                      "name": "stat1Value",
+                      "fill": "#FFFFFF",
+                      "content": "20-30%",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 48,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Wtf3C",
+                      "name": "stat1Label",
+                      "fill": "$--gray-400",
+                      "content": "Average return rate",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "aZIMV",
+                  "name": "stat2",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "2btES",
+                      "name": "stat2Value",
+                      "fill": "#FFFFFF",
+                      "content": "40%+",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 48,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YuT4h",
+                      "name": "stat2Label",
+                      "fill": "$--gray-400",
+                      "content": "In apparel returns",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "elQgA",
+                  "name": "stat3",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iQlUK",
+                      "name": "stat3Value",
+                      "fill": "#FFFFFF",
+                      "content": "$B+",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 48,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "XJpAT",
+                      "name": "stat3Label",
+                      "fill": "$--gray-400",
+                      "content": "Lost to missed deadlines",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LLs5U",
+                  "name": "stat4",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "9xHML",
+                      "name": "stat4Value",
+                      "fill": "#FFFFFF",
+                      "content": "100%",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 48,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "wDiru",
+                      "name": "stat4Label",
+                      "fill": "$--gray-400",
+                      "content": "Free to use",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Uuspu",
+              "name": "testimonials",
+              "width": "fill_container",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "5FnNa",
+                  "name": "testimonial1",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "cornerRadius": "$--radius-lg",
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "S322g",
+                      "name": "t1Quote",
+                      "fill": "#FFFFFF",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "\"I ordered three shoe sizes to find the right fit for my daughter. Trackable reminded me 3 days before the return window closed — saving me $120 on the two pairs that didn't fit.\"",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "49dgZ",
+                      "name": "t1Author",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "jp0JY",
+                          "name": "t1Avatar",
+                          "width": 40,
+                          "height": 40,
+                          "fill": "$--primary",
+                          "cornerRadius": 100,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "47y9b",
+                              "name": "t1Initials",
+                              "fill": "#FFFFFF",
+                              "content": "SK",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "SrszF",
+                          "name": "t1Info",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "JHUIY",
+                              "name": "t1Name",
+                              "fill": "#FFFFFF",
+                              "content": "Monica R.",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "fqO27",
+                              "name": "t1Role",
+                              "fill": "$--gray-400",
+                              "content": "Working Parent",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rusY6",
+                  "name": "testimonial2",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "cornerRadius": "$--radius-lg",
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yfPFA",
+                      "name": "t2Quote",
+                      "fill": "#FFFFFF",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "\"I wanted to exchange my laptop but couldn't find clear instructions anywhere. Trackable's agent explained the policy and told me exactly what to do. Hours of research saved.\"",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Qzpru",
+                      "name": "t2Author",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "wq2jF",
+                          "name": "t2Avatar",
+                          "width": 40,
+                          "height": 40,
+                          "fill": "$--green-success",
+                          "cornerRadius": 100,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "4JHTo",
+                              "name": "t2Initials",
+                              "fill": "#FFFFFF",
+                              "content": "MJ",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "1MG7F",
+                          "name": "t2Info",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "wRF5Z",
+                              "name": "t2Name",
+                              "fill": "#FFFFFF",
+                              "content": "John T.",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "qcYze",
+                              "name": "t2Role",
+                              "fill": "$--gray-400",
+                              "content": "College Student",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nUfld",
+                  "name": "testimonial3",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "cornerRadius": "$--radius-lg",
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iFMha",
+                      "name": "t3Quote",
+                      "fill": "#FFFFFF",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "\"Finally something that just works. Connected my Gmail, and within minutes I could see all my orders organized with return deadlines highlighted. Game changer.\"",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MiPYd",
+                      "name": "t3Author",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "UYaTT",
+                          "name": "t3Avatar",
+                          "width": 40,
+                          "height": 40,
+                          "fill": "$--purple-return",
+                          "cornerRadius": 100,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "4kk8Y",
+                              "name": "t3Initials",
+                              "fill": "#FFFFFF",
+                              "content": "EL",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "VDhyj",
+                          "name": "t3Info",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hdfkL",
+                              "name": "t3Name",
+                              "fill": "#FFFFFF",
+                              "content": "Sarah K.",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "QRqXc",
+                              "name": "t3Role",
+                              "fill": "$--gray-400",
+                              "content": "Online Shopper",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "QLHqB",
+          "name": "Final CTA",
+          "width": "fill_container",
+          "fill": "$--primary-light",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            100,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "HyMIp",
+              "name": "ctaContent",
+              "width": 700,
+              "layout": "vertical",
+              "gap": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "k4SGh",
+                  "name": "ctaHeadline",
+                  "fill": "$--black-primary",
+                  "content": "Stop losing money on missed returns",
+                  "textAlign": "center",
+                  "fontFamily": "Space Grotesk",
+                  "fontSize": 40,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "PMwMn",
+                  "name": "ctaSubline",
+                  "fill": "$--gray-700",
+                  "content": "Join smart shoppers who let their AI agent handle post-purchase chaos. Free to use, no credit card required.",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "IFu1Q",
+                  "name": "ctaButtons",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "vhC1M",
+                      "type": "ref",
+                      "ref": "9FejO",
+                      "padding": [
+                        14,
+                        28
+                      ],
+                      "name": "ctaPrimary",
+                      "descendants": {
+                        "TCXbQ": {
+                          "iconFontName": "mail"
+                        },
+                        "Ez2qo": {
+                          "content": "Get Started with Gmail",
+                          "fontSize": 16
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "5Pbf1",
+                  "name": "ctaTrust",
+                  "fill": "$--gray-700",
+                  "content": "Free forever • Privacy-first • Your data stays yours",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "V1VZY",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$--bg-surface",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": 64,
+          "children": [
+            {
+              "type": "frame",
+              "id": "KoYp8",
+              "name": "footerTop",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "9lPmp",
+                  "name": "footerBrand",
+                  "width": 300,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "JZq0A",
+                      "name": "footerLogo",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bfP6r",
+                          "name": "footerLogoIcon",
+                          "width": 28,
+                          "height": 28,
+                          "fill": "$--primary",
+                          "cornerRadius": "$--radius-sm",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "kqk3X",
+                              "name": "footerLogoIconInner",
+                              "width": 16,
+                              "height": 16,
+                              "iconFontName": "package",
+                              "iconFontFamily": "lucide",
+                              "fill": "#FFFFFF"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "6KYQd",
+                          "name": "footerLogoText",
+                          "fill": "$--black-primary",
+                          "content": "Trackable",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "aGZTD",
+                      "name": "footerTagline",
+                      "fill": "$--gray-700",
+                      "textGrowth": "fixed-width",
+                      "width": 280,
+                      "content": "Your personal AI agent for post-purchase. Track orders, never miss returns, get proactive help.",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ejrYp",
+                  "name": "footerLinks",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "MMaXE",
+                      "name": "footerProduct",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NSCRR",
+                          "name": "footerProductLabel",
+                          "fill": "$--black-primary",
+                          "content": "Product",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600",
+                          "letterSpacing": 0.5
+                        },
+                        {
+                          "type": "frame",
+                          "id": "9Kksw",
+                          "name": "footerProductLinks",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "8VNGP",
+                              "name": "footerPLink1",
+                              "fill": "$--gray-700",
+                              "content": "Features",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "M1yDu",
+                              "name": "footerPLink2",
+                              "fill": "$--gray-700",
+                              "content": "Pricing",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "l4ln6",
+                              "name": "footerPLink3",
+                              "fill": "$--gray-700",
+                              "content": "Integrations",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "e2Z8k",
+                              "name": "footerPLink4",
+                              "fill": "$--gray-700",
+                              "content": "API",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uxNe8",
+                      "name": "footerCompany",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "gkHpf",
+                          "name": "footerCompanyLabel",
+                          "fill": "$--black-primary",
+                          "content": "Company",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600",
+                          "letterSpacing": 0.5
+                        },
+                        {
+                          "type": "frame",
+                          "id": "k3ucX",
+                          "name": "footerCompanyLinks",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "3QMov",
+                              "name": "footerCLink1",
+                              "fill": "$--gray-700",
+                              "content": "About",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "FKIcM",
+                              "name": "footerCLink2",
+                              "fill": "$--gray-700",
+                              "content": "Blog",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "79jbo",
+                              "name": "footerCLink3",
+                              "fill": "$--gray-700",
+                              "content": "Careers",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Ozepb",
+                              "name": "footerCLink4",
+                              "fill": "$--gray-700",
+                              "content": "Contact",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kFRLY",
+                      "name": "footerLegal",
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jJa73",
+                          "name": "footerLegalLabel",
+                          "fill": "$--black-primary",
+                          "content": "Legal",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600",
+                          "letterSpacing": 0.5
+                        },
+                        {
+                          "type": "frame",
+                          "id": "KS3io",
+                          "name": "footerLegalLinks",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "y7z0E",
+                              "name": "footerLLink1",
+                              "fill": "$--gray-700",
+                              "content": "Privacy Policy",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "sde1J",
+                              "name": "footerLLink2",
+                              "fill": "$--gray-700",
+                              "content": "Terms of Service",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "1u0wk",
+                              "name": "footerLLink3",
+                              "fill": "$--gray-700",
+                              "content": "Cookie Policy",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "57I5e",
+              "name": "footerBottom",
+              "width": "fill_container",
+              "stroke": {
+                "align": "inside",
+                "thickness": {
+                  "top": 1
+                },
+                "fill": "$--border"
+              },
+              "padding": [
+                24,
+                0,
+                0,
+                0
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "QNyWv",
+                  "name": "footerCopyright",
+                  "fill": "$--gray-700",
+                  "content": "© 2026 Trackable. All rights reserved.",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "ifuJI",
+                  "name": "footerSocial",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "I8eHx",
+                      "name": "footerTwitter",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "twitter",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--gray-700"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "2Ytsy",
+                      "name": "footerLinkedIn",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "linkedin",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--gray-700"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "6QJ4r",
+                      "name": "footerGithub",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "github",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--gray-700"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "variables": {
