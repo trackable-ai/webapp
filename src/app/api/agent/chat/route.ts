@@ -4,9 +4,12 @@ import { NextResponse } from "next/server";
 
 export const maxDuration = 30;
 
-const TRACKABLE_API_URL = process.env.TRACKABLE_API_URL;
-if (!TRACKABLE_API_URL) {
-  throw new Error("TRACKABLE_API_URL environment variable is required");
+function getTrackableApiUrl(): string {
+  const url = process.env.TRACKABLE_API_URL;
+  if (!url) {
+    throw new Error("TRACKABLE_API_URL environment variable is required");
+  }
+  return url;
 }
 
 interface MessagePart {
@@ -75,14 +78,16 @@ export async function POST(request: Request) {
       user: user?.id,
     };
 
+    const trackableApiUrl = getTrackableApiUrl();
+
     console.log(
       "Calling trackable-agent:",
-      `${TRACKABLE_API_URL}/api/v1/chat/completions`,
+      `${trackableApiUrl}/api/v1/chat/completions`,
     );
 
     // Call trackable-agent OpenAI-compatible endpoint
     const response = await fetch(
-      `${TRACKABLE_API_URL}/api/v1/chat/completions`,
+      `${trackableApiUrl}/api/v1/chat/completions`,
       {
         method: "POST",
         headers: {
@@ -144,8 +149,9 @@ export async function DELETE() {
   }
 
   try {
+    const trackableApiUrl = getTrackableApiUrl();
     const response = await fetch(
-      `${TRACKABLE_API_URL}/api/v1/chat/sessions?user=${encodeURIComponent(user.id)}`,
+      `${trackableApiUrl}/api/v1/chat/sessions?user=${encodeURIComponent(user.id)}`,
       {
         method: "DELETE",
         headers: {
