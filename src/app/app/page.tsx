@@ -1,186 +1,225 @@
-import { AgentBriefing, AgentRecommendationCard } from "@/components/agent";
-import { OrderCard } from "@/components/orders";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { mockOrders, mockRecommendations } from "@/data";
-import { format } from "date-fns";
-import {
-  ArrowRight,
-  Package,
-  RotateCcw,
-  Truck,
-  Clock,
-} from "lucide-react";
-import Link from "next/link";
+"use client";
 
-export default function HomePage() {
-  const urgentRecommendations = mockRecommendations.filter(
-    (r) => r.status === "pending" && (r.urgency === "high" || r.urgency === "critical")
-  );
-  const otherRecommendations = mockRecommendations.filter(
-    (r) => r.status === "pending" && r.urgency !== "high" && r.urgency !== "critical"
-  );
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  MetricCard,
+  AgentCard,
+  DeliveryCard,
+  RecommendationCard,
+} from "@/components/dashboard";
+import { OrderCard } from "@/components/orders";
+import { mockOrders, mockRecommendations } from "@/data";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
+import {
+  TrendingUp,
+  CheckCircle,
+  RotateCcw,
+  AlertCircle,
+  Search,
+  Bell,
+  ArrowRight,
+} from "lucide-react";
+
+export default function DashboardPage() {
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, [supabase.auth]);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  const getDisplayName = (user: User | null) => {
+    if (!user) return "there";
+    return (
+      user.user_metadata?.full_name?.split(" ")[0] ||
+      user.user_metadata?.name?.split(" ")[0] ||
+      user.email?.split("@")[0] ||
+      "there"
+    );
+  };
 
   const activeOrders = mockOrders.filter(
-    (o) => o.status !== "delivered" && o.status !== "cancelled" && o.status !== "returned"
+    (o) =>
+      o.status !== "delivered" && o.status !== "cancelled" && o.status !== "returned"
   );
   const deliveredOrders = mockOrders.filter((o) => o.status === "delivered");
   const returnEligibleOrders = mockOrders.filter(
     (o) => o.status === "delivered" && o.returnPolicy?.isEligible
   );
+  const urgentRecommendations = mockRecommendations.filter(
+    (r) => r.status === "pending" && (r.urgency === "high" || r.urgency === "critical")
+  );
+  const pendingActions =
+    urgentRecommendations.length +
+    mockRecommendations.filter(
+      (r) => r.status === "pending" && r.urgency !== "high" && r.urgency !== "critical"
+    ).length;
 
-  // Get the next delivery
-  const inTransitOrder = activeOrders.find((o) => o.status === "shipped");
+  // Get the next delivery order
+  const inTransitOrder = activeOrders.find(
+    (o) => o.status === "shipped" && o.shipment
+  );
+
+  // Get agent message based on context
+  const getAgentMessage = () => {
+    if (inTransitOrder) {
+      const itemName = inTransitOrder.items[0]?.name || "your order";
+      return `I noticed your ${itemName} is out for delivery today. I'll keep you updated on its progress!`;
+    }
+    if (urgentRecommendations.length > 0) {
+      return `You have ${urgentRecommendations.length} urgent ${urgentRecommendations.length === 1 ? "item" : "items"} requiring your attention. Would you like me to help you with them?`;
+    }
+    if (activeOrders.length > 0) {
+      return `I'm keeping an eye on ${activeOrders.length} active ${activeOrders.length === 1 ? "order" : "orders"} for you. Everything looks good for now!`;
+    }
+    return "Connect your Gmail to start tracking your orders automatically. I'll help you stay on top of deliveries and returns.";
+  };
 
   return (
-    <div className="space-y-8">
-      {/* Agent Briefing */}
-      <AgentBriefing
-        userName="John"
-        ordersCount={mockOrders.length}
-        urgentCount={urgentRecommendations.length}
-      />
-
-      {/* Urgent Actions */}
-      {urgentRecommendations.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <h2 className="text-lg font-semibold">Needs Your Attention</h2>
-            <Badge variant="destructive" className="text-xs">
-              {urgentRecommendations.length} urgent
-            </Badge>
+    <div className="flex flex-col gap-8 px-10 py-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-heading text-[28px] font-semibold text-[#0D0D0D]">
+            {getGreeting()}, {getDisplayName(user)}
+          </h1>
+          <p className="text-sm font-normal text-[#7A7A7A]">
+            Here&apos;s what&apos;s happening with your orders today.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          {/* Search */}
+          <div className="flex items-center gap-2 rounded border border-[#E8E8E8] bg-[#FAFAFA] px-4 py-2.5">
+            <Search className="h-4 w-4 text-[#B0B0B0]" />
+            <span className="text-[13px] font-normal text-[#B0B0B0]">
+              Search orders...
+            </span>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {urgentRecommendations.map((rec) => (
-              <AgentRecommendationCard key={rec.id} recommendation={rec} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Quick Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-status-shipped/10">
-                <Package className="h-6 w-6 text-status-shipped" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{activeOrders.length}</p>
-                <p className="text-sm text-muted-foreground">Active Orders</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-status-delivered/10">
-                <Truck className="h-6 w-6 text-status-delivered" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{deliveredOrders.length}</p>
-                <p className="text-sm text-muted-foreground">Delivered</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-status-return/10">
-                <RotateCcw className="h-6 w-6 text-status-return" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{returnEligibleOrders.length}</p>
-                <p className="text-sm text-muted-foreground">Return Eligible</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-status-processing/10">
-                <Clock className="h-6 w-6 text-status-processing" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">
-                  {urgentRecommendations.length + otherRecommendations.length}
-                </p>
-                <p className="text-sm text-muted-foreground">Pending Actions</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Notifications */}
+          <button className="flex h-10 w-10 items-center justify-center rounded border border-[#E8E8E8] bg-[#FAFAFA] transition-colors hover:bg-[#F5F5F5]">
+            <Bell className="h-[18px] w-[18px] text-[#7A7A7A]" />
+          </button>
+        </div>
       </div>
 
-      {/* Next Delivery */}
-      {inTransitOrder && inTransitOrder.shipment?.estimatedDeliveryAt && (
-        <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
-          <CardContent className="pt-6">
+      {/* Metrics Row */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard
+          label="Active Orders"
+          value={activeOrders.length}
+          trend={{
+            icon: TrendingUp,
+            text: "+3 this week",
+            color: "text-[#10B981]",
+          }}
+        />
+        <MetricCard
+          label="Delivered"
+          value={deliveredOrders.length}
+          trend={{
+            icon: CheckCircle,
+            text: "Last 30 days",
+            color: "text-[#10B981]",
+          }}
+        />
+        <MetricCard
+          label="Return Eligible"
+          value={returnEligibleOrders.length}
+          trend={{
+            icon: RotateCcw,
+            text: "2 expiring soon",
+            color: "text-[#8B5CF6]",
+          }}
+        />
+        <MetricCard
+          label="Pending Actions"
+          value={pendingActions}
+          trend={{
+            icon: AlertCircle,
+            text: "Requires attention",
+            color: "text-[#F59E0B]",
+          }}
+        />
+      </div>
+
+      {/* Content Row */}
+      <div className="flex gap-6">
+        {/* Left Column */}
+        <div className="flex flex-1 flex-col gap-6">
+          {/* Agent Card */}
+          <AgentCard message={getAgentMessage()} />
+
+          {/* Recent Orders Section */}
+          <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Truck className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium">Next Delivery</p>
-                  <p className="text-sm text-muted-foreground">
-                    {inTransitOrder.items[0].name} from {inTransitOrder.merchant.name}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-lg font-semibold">
-                  {format(new Date(inTransitOrder.shipment.estimatedDeliveryAt), "EEEE, MMM d")}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {inTransitOrder.shipment.carrierName} ·{" "}
-                  {inTransitOrder.shipment.status === "in_transit"
-                    ? "In Transit"
-                    : "Out for Delivery"}
-                </p>
-              </div>
+              <h2 className="font-heading text-lg font-semibold text-[#0D0D0D]">
+                Recent Orders
+              </h2>
+              <Link
+                href="/app/orders"
+                className="flex items-center gap-2 rounded px-4 py-2.5 text-[13px] font-medium text-[#7A7A7A] transition-colors hover:bg-[#FAFAFA]"
+              >
+                View all
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Other Recommendations */}
-      {otherRecommendations.length > 0 && (
-        <section>
-          <h2 className="text-lg font-semibold mb-4">Suggestions</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {otherRecommendations.map((rec) => (
-              <AgentRecommendationCard key={rec.id} recommendation={rec} />
-            ))}
+            <div className="flex flex-col gap-3">
+              {mockOrders.slice(0, 3).map((order) => (
+                <OrderCard key={order.id} order={order} />
+              ))}
+            </div>
           </div>
-        </section>
-      )}
+        </div>
 
-      {/* Recent Orders */}
-      <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Recent Orders</h2>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/orders" className="flex items-center gap-1">
-              View all
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
+        {/* Right Column */}
+        <div className="flex w-[360px] shrink-0 flex-col gap-6">
+          {/* Next Delivery Card */}
+          {inTransitOrder && <DeliveryCard order={inTransitOrder} />}
+
+          {/* Recommendations Card */}
+          <div className="flex flex-col gap-4 rounded-lg border border-[#E8E8E8] bg-white p-6">
+            <h3 className="font-heading text-base font-semibold text-[#0D0D0D]">
+              Recommendations
+            </h3>
+            <div className="flex flex-col gap-3">
+              {urgentRecommendations.length > 0 && (
+                <RecommendationCard
+                  type="warning"
+                  title="Return window closing"
+                  description="Nike Air Max 90 return expires in 3 days"
+                />
+              )}
+              {inTransitOrder && (
+                <RecommendationCard
+                  type="info"
+                  title="Package arriving today"
+                  description={`${inTransitOrder.items[0]?.name || "Your order"} is out for delivery`}
+                />
+              )}
+              {urgentRecommendations.length === 0 && !inTransitOrder && (
+                <p className="text-sm text-[#7A7A7A]">
+                  No recommendations at this time.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="space-y-4">
-          {mockOrders.slice(0, 3).map((order) => (
-            <OrderCard key={order.id} order={order} />
-          ))}
-        </div>
-      </section>
+      </div>
     </div>
   );
 }

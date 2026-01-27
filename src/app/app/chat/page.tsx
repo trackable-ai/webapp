@@ -5,11 +5,8 @@ import type { UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useRef, useMemo } from "react";
 import { ChatMessage, ChatInput, ChatSuggestions } from "@/components/chat";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sparkles, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
-// Helper to extract text content from message parts
 function getMessageContent(message: UIMessage): string {
   if (!message.parts || message.parts.length === 0) {
     return "";
@@ -73,15 +70,17 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)]">
+    <div className="flex h-[calc(100vh-56px)] flex-col px-10 py-8 lg:h-screen">
       {/* Header */}
-      <div className="flex items-center gap-3 pb-4 border-b">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-          <Sparkles className="h-5 w-5 text-primary" />
+      <div className="flex items-center gap-3 border-b border-[#E8E8E8] pb-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EFF6FF]">
+          <Sparkles className="h-5 w-5 text-[#3B82F6]" />
         </div>
-        <div>
-          <h1 className="font-semibold">Ask Trackable</h1>
-          <p className="text-sm text-muted-foreground">
+        <div className="flex flex-col gap-0.5">
+          <h1 className="font-heading text-base font-semibold text-[#0D0D0D]">
+            Ask Trackable
+          </h1>
+          <p className="text-xs font-normal text-[#7A7A7A]">
             Your AI shopping assistant
           </p>
         </div>
@@ -89,17 +88,17 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
 
       {/* Error Alert */}
       {error && (
-        <Alert variant="destructive" className="mt-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {error.message || "Failed to get response. Please check your API key."}
-          </AlertDescription>
-        </Alert>
+        <div className="mt-4 flex items-center gap-3 rounded-lg bg-[#FEF2F2] p-4">
+          <AlertCircle className="h-5 w-5 text-[#EF4444]" />
+          <span className="text-sm font-normal text-[#EF4444]">
+            {error.message || "Failed to get response. Please try again."}
+          </span>
+        </div>
       )}
 
       {/* Messages */}
-      <ScrollArea className="flex-1 py-4" ref={scrollAreaRef}>
-        <div className="space-y-6 pr-4">
+      <div ref={scrollAreaRef} className="flex-1 overflow-y-auto py-6">
+        <div className="space-y-6">
           {messages.map((message) => {
             const content = getMessageContent(message);
             if (!content) return null;
@@ -114,34 +113,31 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
 
           {isLoading && (
             <div className="flex gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EFF6FF]">
+                <Sparkles className="h-4 w-4 animate-pulse text-[#3B82F6]" />
               </div>
-              <div className="rounded-2xl rounded-tl-sm bg-agent-message px-4 py-2.5">
+              <div className="rounded-2xl rounded-tl-sm bg-[#EFF6FF] px-4 py-2.5">
                 <div className="flex gap-1">
-                  <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:-0.3s]" />
-                  <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:-0.15s]" />
-                  <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce" />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-[#3B82F6]/40 [animation-delay:-0.3s]" />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-[#3B82F6]/40 [animation-delay:-0.15s]" />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-[#3B82F6]/40" />
                 </div>
               </div>
             </div>
           )}
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Suggestions */}
       {messages.length <= 2 && (
-        <div className="py-4 border-t">
-          <p className="text-sm text-muted-foreground mb-2">Try asking:</p>
-          <ChatSuggestions
-            suggestions={suggestions}
-            onSelect={handleSend}
-          />
+        <div className="border-t border-[#E8E8E8] py-4">
+          <p className="mb-2 text-xs font-normal text-[#7A7A7A]">Try asking:</p>
+          <ChatSuggestions suggestions={suggestions} onSelect={handleSend} />
         </div>
       )}
 
       {/* Input */}
-      <div className="pt-4 border-t">
+      <div className="border-t border-[#E8E8E8] pt-4">
         <ChatInput
           onSend={handleSend}
           disabled={isLoading}

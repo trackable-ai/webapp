@@ -1,14 +1,10 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { DeadlineCountdown, PriceDisplay } from "@/components/common";
-import { mockOrders } from "@/data";
-import { format } from "date-fns";
-import { RotateCcw, Package, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { mockOrders } from "@/data";
+import { format } from "date-fns";
+import { RotateCcw, Package, AlertCircle, ArrowRight } from "lucide-react";
 
 export default function ReturnsPage() {
   const returnEligibleOrders = mockOrders.filter(
@@ -21,158 +17,184 @@ export default function ReturnsPage() {
     return daysA - daysB;
   });
 
+  const expiringOrders = sortedOrders.filter(
+    (o) => (o.returnPolicy?.daysRemaining ?? 0) <= 7
+  );
+
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6 px-10 py-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Returns & Exchanges</h1>
-        <p className="text-muted-foreground">
-          Manage returns for your delivered orders.
+      <div className="flex flex-col gap-1">
+        <h1 className="font-heading text-[28px] font-semibold text-[#0D0D0D]">
+          Returns & Exchanges
+        </h1>
+        <p className="text-sm font-normal text-[#7A7A7A]">
+          Manage returns for your delivered orders
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-status-return/10">
-                <RotateCcw className="h-6 w-6 text-status-return" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{returnEligibleOrders.length}</p>
-                <p className="text-sm text-muted-foreground">Return Eligible</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid gap-5 sm:grid-cols-3">
+        <div className="flex items-center gap-4 rounded-lg border border-[#E8E8E8] bg-white p-5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#F5F3FF]">
+            <RotateCcw className="h-6 w-6 text-[#8B5CF6]" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-heading text-2xl font-semibold text-[#0D0D0D]">
+              {returnEligibleOrders.length}
+            </span>
+            <span className="text-sm font-normal text-[#7A7A7A]">
+              Return Eligible
+            </span>
+          </div>
+        </div>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-status-alert/10">
-                <Package className="h-6 w-6 text-status-alert" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">
-                  {sortedOrders.filter((o) => (o.returnPolicy?.daysRemaining ?? 0) <= 7).length}
-                </p>
-                <p className="text-sm text-muted-foreground">Expiring Soon</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center gap-4 rounded-lg border border-[#E8E8E8] bg-white p-5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#FEF3C7]">
+            <AlertCircle className="h-6 w-6 text-[#F59E0B]" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-heading text-2xl font-semibold text-[#0D0D0D]">
+              {expiringOrders.length}
+            </span>
+            <span className="text-sm font-normal text-[#7A7A7A]">
+              Expiring Soon
+            </span>
+          </div>
+        </div>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-status-processing/10">
-                <RotateCcw className="h-6 w-6 text-status-processing" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">0</p>
-                <p className="text-sm text-muted-foreground">In Progress</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center gap-4 rounded-lg border border-[#E8E8E8] bg-white p-5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#EFF6FF]">
+            <Package className="h-6 w-6 text-[#3B82F6]" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-heading text-2xl font-semibold text-[#0D0D0D]">
+              0
+            </span>
+            <span className="text-sm font-normal text-[#7A7A7A]">
+              In Progress
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Return eligible orders */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Return Eligible Items</h2>
+      <div className="flex flex-col gap-4">
+        <h2 className="font-heading text-lg font-semibold text-[#0D0D0D]">
+          Return Eligible Items
+        </h2>
 
         {sortedOrders.length > 0 ? (
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             {sortedOrders.map((order) => (
-              <Card key={order.id} className="overflow-hidden">
-                <CardContent className="p-6">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    {/* Product image */}
-                    <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted">
-                      {order.items[0].imageUrl ? (
-                        <Image
-                          src={order.items[0].imageUrl}
-                          alt={order.items[0].name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center">
-                          <Package className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Order details */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="font-semibold">{order.items[0].name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {order.merchant.name} · #{order.orderNumber}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Delivered{" "}
-                            {format(new Date(order.deliveredAt!), "MMMM d, yyyy")}
-                          </p>
-                        </div>
-                        <PriceDisplay cents={order.totalCents} />
+              <div
+                key={order.id}
+                className="flex flex-col gap-4 rounded-lg border border-[#E8E8E8] bg-white p-5"
+              >
+                <div className="flex items-start gap-4">
+                  {/* Product image */}
+                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded bg-[#FAFAFA]">
+                    {order.items[0].imageUrl ? (
+                      <Image
+                        src={order.items[0].imageUrl}
+                        alt={order.items[0].name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <Package className="h-8 w-8 text-[#B0B0B0]" />
                       </div>
-
-                      <div className="mt-4 flex flex-wrap items-center gap-4">
-                        {order.returnPolicy?.daysRemaining !== undefined && (
-                          <DeadlineCountdown
-                            daysRemaining={order.returnPolicy.daysRemaining}
-                          />
-                        )}
-
-                        <div className="flex gap-2 ml-auto">
-                          <Button size="sm" asChild>
-                            <Link href={`/orders/${order.id}?tab=return`}>
-                              Start Return
-                            </Link>
-                          </Button>
-                          <Button size="sm" variant="outline" asChild>
-                            <Link href={`/orders/${order.id}`}>
-                              View Details
-                              <ArrowRight className="ml-1 h-4 w-4" />
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Policy summary */}
-                      <div className="mt-3 flex flex-wrap gap-2 text-sm">
-                        <Badge variant="outline">
-                          {order.returnPolicy?.freeReturn
-                            ? "Free return"
-                            : "Paid return"}
-                        </Badge>
-                        <Badge variant="outline">
-                          {order.returnPolicy?.returnType === "full_refund"
-                            ? "Full refund"
-                            : order.returnPolicy?.returnType === "store_credit"
-                            ? "Store credit"
-                            : "Exchange only"}
-                        </Badge>
-                      </div>
-                    </div>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
+
+                  {/* Order details */}
+                  <div className="flex flex-1 flex-col gap-1">
+                    <span className="font-heading text-sm font-medium text-[#0D0D0D]">
+                      {order.items[0].name}
+                    </span>
+                    <span className="text-xs font-normal text-[#7A7A7A]">
+                      {order.merchant.name} · #{order.orderNumber}
+                    </span>
+                    <span className="text-xs font-normal text-[#7A7A7A]">
+                      Delivered{" "}
+                      {format(new Date(order.deliveredAt!), "MMMM d, yyyy")}
+                    </span>
+                  </div>
+
+                  {/* Deadline */}
+                  {order.returnPolicy?.daysRemaining !== undefined && (
+                    <div
+                      className={`rounded-full px-3 py-1.5 ${
+                        order.returnPolicy.daysRemaining <= 3
+                          ? "bg-[#FEF2F2]"
+                          : order.returnPolicy.daysRemaining <= 7
+                            ? "bg-[#FEF3C7]"
+                            : "bg-[#ECFDF5]"
+                      }`}
+                    >
+                      <span
+                        className={`text-xs font-medium ${
+                          order.returnPolicy.daysRemaining <= 3
+                            ? "text-[#EF4444]"
+                            : order.returnPolicy.daysRemaining <= 7
+                              ? "text-[#F59E0B]"
+                              : "text-[#10B981]"
+                        }`}
+                      >
+                        {order.returnPolicy.daysRemaining} days left
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-3">
+                  <Link
+                    href={`/app/orders/${order.id}?tab=return`}
+                    className="flex items-center justify-center gap-2 rounded bg-[#3B82F6] px-5 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2563EB]"
+                  >
+                    Start Return
+                  </Link>
+                  <Link
+                    href={`/app/orders/${order.id}`}
+                    className="flex items-center justify-center gap-2 rounded border border-[#E8E8E8] bg-white px-5 py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]"
+                  >
+                    View Details
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+
+                  {/* Policy badges */}
+                  <div className="ml-auto flex items-center gap-2">
+                    <span className="rounded-full border border-[#E8E8E8] px-2.5 py-1 text-xs font-normal text-[#7A7A7A]">
+                      {order.returnPolicy?.freeReturn
+                        ? "Free return"
+                        : "Paid return"}
+                    </span>
+                    <span className="rounded-full border border-[#E8E8E8] px-2.5 py-1 text-xs font-normal text-[#7A7A7A]">
+                      {order.returnPolicy?.returnType === "full_refund"
+                        ? "Full refund"
+                        : order.returnPolicy?.returnType === "store_credit"
+                          ? "Store credit"
+                          : "Exchange only"}
+                    </span>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         ) : (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <RotateCcw className="mx-auto h-12 w-12 text-muted-foreground/50" />
-              <h3 className="mt-4 font-semibold">No return-eligible items</h3>
-              <p className="text-sm text-muted-foreground">
-                Items become return-eligible after delivery.
-              </p>
-            </CardContent>
-          </Card>
+          <div className="flex flex-col items-center justify-center rounded-lg border border-[#E8E8E8] bg-white py-16">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FAFAFA]">
+              <RotateCcw className="h-6 w-6 text-[#B0B0B0]" />
+            </div>
+            <h3 className="mt-4 font-heading text-sm font-medium text-[#0D0D0D]">
+              No return-eligible items
+            </h3>
+            <p className="mt-1 text-xs font-normal text-[#7A7A7A]">
+              Items become return-eligible after delivery.
+            </p>
+          </div>
         )}
       </div>
     </div>

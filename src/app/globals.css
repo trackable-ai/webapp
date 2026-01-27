@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
   --font-heading: "Space Grotesk", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, sans-serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,9 +39,9 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
@@ -73,81 +73,85 @@
   --color-agent-recommendation: var(--agent-recommendation);
   --color-agent-warning: var(--agent-warning);
 
-  /* Landing page colors */
-  --color-landing-primary: #3B82F6;
-  --color-landing-primary-light: #EFF6FF;
-  --color-landing-black: #0D0D0D;
-  --color-landing-gray-700: #7A7A7A;
-  --color-landing-gray-400: #B0B0B0;
-  --color-landing-border: #E8E8E8;
-  --color-landing-surface: #FAFAFA;
-  --color-landing-green-success: #10B981;
-  --color-landing-green-light: #ECFDF5;
-  --color-landing-amber-warning: #F59E0B;
-  --color-landing-amber-light: #FEF3C7;
-  --color-landing-purple: #8B5CF6;
-  --color-landing-purple-light: #F5F3FF;
+  /* Design system colors from .pen file */
+  --color-ds-primary: #3B82F6;
+  --color-ds-primary-light: #EFF6FF;
+  --color-ds-black: #0D0D0D;
+  --color-ds-gray-700: #7A7A7A;
+  --color-ds-gray-400: #B0B0B0;
+  --color-ds-gray-200: #E5E7EB;
+  --color-ds-border: #E8E8E8;
+  --color-ds-surface: #FAFAFA;
+  --color-ds-card: #FFFFFF;
+  --color-ds-green-success: #10B981;
+  --color-ds-green-light: #ECFDF5;
+  --color-ds-amber-warning: #F59E0B;
+  --color-ds-amber-light: #FEF3C7;
+  --color-ds-purple: #8B5CF6;
+  --color-ds-purple-light: #F5F3FF;
+  --color-ds-red-error: #EF4444;
+  --color-ds-red-light: #FEF2F2;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.588 0.158 241.966);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.588 0.158 241.966);
+  --radius: 0.5rem;
+  --background: #FFFFFF;
+  --foreground: #0D0D0D;
+  --card: #FFFFFF;
+  --card-foreground: #0D0D0D;
+  --popover: #FFFFFF;
+  --popover-foreground: #0D0D0D;
+  --primary: #3B82F6;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FAFAFA;
+  --secondary-foreground: #0D0D0D;
+  --muted: #FAFAFA;
+  --muted-foreground: #7A7A7A;
+  --accent: #EFF6FF;
+  --accent-foreground: #3B82F6;
+  --destructive: #EF4444;
+  --border: #E8E8E8;
+  --input: #E8E8E8;
+  --ring: #3B82F6;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.588 0.158 241.966);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.588 0.158 241.966);
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0D0D0D;
+  --sidebar-primary: #3B82F6;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EFF6FF;
+  --sidebar-accent-foreground: #3B82F6;
+  --sidebar-border: #E8E8E8;
+  --sidebar-ring: #3B82F6;
 
-  /* Brand colors - Sky blue for trust */
-  --brand-50: #f0f9ff;
-  --brand-100: #e0f2fe;
-  --brand-200: #bae6fd;
-  --brand-300: #7dd3fc;
-  --brand-400: #38bdf8;
-  --brand-500: #0ea5e9;
-  --brand-600: #0284c7;
-  --brand-700: #0369a1;
-  --brand-800: #075985;
-  --brand-900: #0c4a6e;
+  /* Brand colors - matches design system primary */
+  --brand-50: #EFF6FF;
+  --brand-100: #DBEAFE;
+  --brand-200: #BFDBFE;
+  --brand-300: #93C5FD;
+  --brand-400: #60A5FA;
+  --brand-500: #3B82F6;
+  --brand-600: #2563EB;
+  --brand-700: #1D4ED8;
+  --brand-800: #1E40AF;
+  --brand-900: #1E3A8A;
 
-  /* Status colors */
-  --status-delivered: #10b981;
-  --status-shipped: #3b82f6;
-  --status-processing: #f59e0b;
-  --status-pending: #6b7280;
-  --status-alert: #ef4444;
-  --status-return: #8b5cf6;
+  /* Status colors - matches design badges */
+  --status-delivered: #10B981;
+  --status-shipped: #3B82F6;
+  --status-processing: #F59E0B;
+  --status-pending: #7A7A7A;
+  --status-alert: #EF4444;
+  --status-return: #8B5CF6;
 
-  /* Agent colors */
-  --agent-message: #f8fafc;
-  --agent-thinking: #e0f2fe;
-  --agent-recommendation: #ecfdf5;
-  --agent-warning: #fef3c7;
+  /* Agent colors - matches design */
+  --agent-message: #EFF6FF;
+  --agent-thinking: #EFF6FF;
+  --agent-recommendation: #ECFDF5;
+  --agent-warning: #FEF3C7;
 }
 
 .dark {
