@@ -6,6 +6,8 @@ import type {
   GmailMessagePart,
   ParsedOrderEmail,
 } from "@/lib/gmail/types";
+import { ingestEmail } from "@/lib/trackable-agent/client";
+import type { EmailIngestionResult } from "@/lib/trackable-agent/types";
 
 const ORDER_KEYWORDS = [
   "order confirmation",
@@ -84,8 +86,6 @@ function parseOrderEmail(message: GmailMessage): ParsedOrderEmail {
   const from = getHeader("from") || "";
   const date = new Date(parseInt(message.internalDate));
 
-  console.log("Extracting body from:", message.payload);
-
   // Extract body content (handles nested MIME structures)
   const body = extractEmailBody(message.payload);
 
@@ -138,6 +138,42 @@ export async function POST(request: Request) {
       parsedEmails.push(parsed);
     }
 
+    // Submit emails to Trackable API for ingestion
+    const ingestionResults = await Promise.allSettled(
+      parsedEmails.map((email) =>
+        ingestEmail(
+          {
+            email_content: email.rawBody,
+            email_subject: email.subject,
+            email_from: email.from,
+          },
+          user.id,
+        ),
+      ),
+    );
+
+    // Map ingestion results to emails
+    const emailsWithIngestion = parsedEmails.map((email, index) => {
+      const result = ingestionResults[index];
+      let ingestion: EmailIngestionResult | undefined;
+
+      if (result.status === "fulfilled") {
+        ingestion = result.value;
+      } else {
+        ingestion = { success: false, error: result.reason?.message };
+      }
+
+      return {
+        id: email.messageId,
+        subject: email.subject,
+        from: email.from,
+        date: email.date,
+        snippet: email.snippet,
+        rawBody: email.rawBody,
+        ingestion,
+      };
+    });
+
     // Update last synced time
     await supabase
       .from("user_gmail_tokens")
@@ -146,15 +182,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      count: parsedEmails.length,
-      emails: parsedEmails.map((e) => ({
-        id: e.messageId,
-        subject: e.subject,
-        from: e.from,
-        date: e.date,
-        snippet: e.snippet,
-        rawBody: e.rawBody,
-      })),
+      count: emailsWithIngestion.length,
+      emails: emailsWithIngestion,
     });
   } catch (error) {
     console.error("Gmail sync error:", error);

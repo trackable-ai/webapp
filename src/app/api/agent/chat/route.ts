@@ -1,16 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { createSSETransformStream } from "@/lib/trackable-agent/sse-transformer";
+import { getTrackableApiUrl } from "@/lib/trackable-agent/client";
 import { NextResponse } from "next/server";
 
 export const maxDuration = 30;
-
-function getTrackableApiUrl(): string {
-  const url = process.env.TRACKABLE_API_URL;
-  if (!url) {
-    throw new Error("TRACKABLE_API_URL environment variable is required");
-  }
-  return url;
-}
 
 interface MessagePart {
   type: string;
