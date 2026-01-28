@@ -1822,6 +1822,20 @@
                           "content": "Filter"
                         }
                       }
+                    },
+                    {
+                      "id": "has2d",
+                      "type": "ref",
+                      "ref": "9FejO",
+                      "name": "ordersAddOrderBtn",
+                      "descendants": {
+                        "TCXbQ": {
+                          "iconFontName": "plus"
+                        },
+                        "Ez2qo": {
+                          "content": "Add Order"
+                        }
+                      }
                     }
                   ]
                 }
@@ -6327,6 +6341,1047 @@
                       "iconFontName": "github",
                       "iconFontFamily": "lucide",
                       "fill": "$--gray-700"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Klfcj",
+      "x": 719,
+      "y": 110,
+      "name": "UploadZone",
+      "reusable": true,
+      "width": 400,
+      "height": 200,
+      "fill": "$--bg-surface",
+      "cornerRadius": "$--radius-md",
+      "stroke": {
+        "align": "inside",
+        "thickness": 2,
+        "fill": "$--border"
+      },
+      "layout": "vertical",
+      "gap": 16,
+      "padding": 32,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "8SsqK",
+          "name": "uploadIconCircle",
+          "width": 56,
+          "height": 56,
+          "fill": "$--primary-light",
+          "cornerRadius": 100,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "uIBH9",
+              "name": "uploadIcon",
+              "width": 24,
+              "height": 24,
+              "iconFontName": "upload",
+              "iconFontFamily": "lucide",
+              "fill": "$--primary"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vyQQn",
+          "name": "uploadTextGroup",
+          "layout": "vertical",
+          "gap": 4,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "rVAZi",
+              "name": "uploadTitle",
+              "fill": "$--black-primary",
+              "content": "Drop your receipt or order confirmation here",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 14,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "DJhNt",
+              "name": "uploadSubtitle",
+              "fill": "$--gray-700",
+              "content": "or click to browse files",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "mD31u",
+          "name": "uploadHint",
+          "fill": "$--gray-400",
+          "content": "Supports PNG, JPG, PDF up to 10MB",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "VsPSN",
+      "x": 3380,
+      "y": 380,
+      "name": "Orders - Upload Modal",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$--bg-page",
+      "children": [
+        {
+          "id": "dlZii",
+          "type": "ref",
+          "ref": "YT2A0",
+          "height": "fill_container",
+          "name": "modalSidebar",
+          "descendants": {
+            "WLUVp": {
+              "children": [
+                {
+                  "id": "JrkH2",
+                  "type": "ref",
+                  "ref": "5qhcW",
+                  "width": "fill_container",
+                  "descendants": {
+                    "1LpDZ": {
+                      "iconFontName": "layout-dashboard"
+                    },
+                    "V7NLV": {
+                      "content": "Dashboard"
+                    }
+                  }
+                },
+                {
+                  "id": "BHEku",
+                  "type": "ref",
+                  "ref": "80kSU",
+                  "width": "fill_container",
+                  "descendants": {
+                    "nWQkx": {
+                      "iconFontName": "package"
+                    },
+                    "CgtDl": {
+                      "content": "Orders"
+                    }
+                  }
+                },
+                {
+                  "id": "HLzoN",
+                  "type": "ref",
+                  "ref": "5qhcW",
+                  "width": "fill_container",
+                  "descendants": {
+                    "1LpDZ": {
+                      "iconFontName": "rotate-ccw"
+                    },
+                    "V7NLV": {
+                      "content": "Returns"
+                    }
+                  }
+                },
+                {
+                  "id": "jDXn0",
+                  "type": "ref",
+                  "ref": "5qhcW",
+                  "width": "fill_container",
+                  "descendants": {
+                    "1LpDZ": {
+                      "iconFontName": "message-circle"
+                    },
+                    "V7NLV": {
+                      "content": "Chat"
+                    }
+                  }
+                },
+                {
+                  "id": "zU2Fs",
+                  "type": "ref",
+                  "ref": "5qhcW",
+                  "width": "fill_container",
+                  "descendants": {
+                    "1LpDZ": {
+                      "iconFontName": "settings"
+                    },
+                    "V7NLV": {
+                      "content": "Settings"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "7Nd9d",
+          "name": "modalMainContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            32,
+            40
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "ZfBz6",
+              "name": "modalPageHeader",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "0aB6E",
+                  "name": "modalTitleGroup",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pOqQS",
+                      "name": "modalPageTitle",
+                      "fill": "$--black-primary",
+                      "content": "Orders",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 28,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "lmMxy",
+                      "name": "modalPageSubtitle",
+                      "fill": "$--gray-700",
+                      "content": "Manage and track all your orders in one place",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "5JkoE",
+          "name": "modalOverlay",
+          "width": 1170,
+          "height": 900,
+          "fill": "rgba(0,0,0,0.5)",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "lpGnh",
+              "name": "uploadModalCard",
+              "width": 520,
+              "fill": "$--bg-card",
+              "cornerRadius": "$--radius-lg",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ASZf1",
+                  "name": "modalHeader",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "bottom": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "padding": 24,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "i2IEO",
+                      "name": "modalTitleGroup",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wN893",
+                          "name": "modalTitle",
+                          "fill": "$--black-primary",
+                          "content": "Add Order",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "TpKGc",
+                          "name": "modalSubtitleText",
+                          "fill": "$--gray-700",
+                          "content": "Upload a receipt or order confirmation",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "oCT3z",
+                      "name": "closeBtn",
+                      "width": 32,
+                      "height": 32,
+                      "cornerRadius": "$--radius-sm",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "T6DJL",
+                          "name": "closeIcon",
+                          "width": 18,
+                          "height": 18,
+                          "iconFontName": "x",
+                          "iconFontFamily": "lucide",
+                          "fill": "$--gray-700"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BpyXS",
+                  "name": "modalBody",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": 24,
+                  "children": [
+                    {
+                      "id": "hO1cB",
+                      "type": "ref",
+                      "ref": "Klfcj",
+                      "name": "modalUploadZone",
+                      "width": "fill_container",
+                      "height": 180
+                    },
+                    {
+                      "type": "frame",
+                      "id": "IcOTc",
+                      "name": "orDivider",
+                      "width": "fill_container",
+                      "gap": 16,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "YubJD",
+                          "name": "divLine1",
+                          "width": "fill_container",
+                          "height": 1,
+                          "fill": "$--border"
+                        },
+                        {
+                          "type": "text",
+                          "id": "FEC5g",
+                          "name": "orText",
+                          "fill": "$--gray-700",
+                          "content": "or paste a tracking number",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "fnjg4",
+                          "name": "divLine2",
+                          "width": "fill_container",
+                          "height": 1,
+                          "fill": "$--border"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BR6nT",
+                      "name": "trackingInput",
+                      "width": "fill_container",
+                      "fill": "$--bg-surface",
+                      "cornerRadius": "$--radius-sm",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$--border"
+                      },
+                      "gap": 8,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "IBN5Q",
+                          "name": "trackingIcon",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "hash",
+                          "iconFontFamily": "lucide",
+                          "fill": "$--gray-400"
+                        },
+                        {
+                          "type": "text",
+                          "id": "KNZMo",
+                          "name": "trackingPlaceholder",
+                          "fill": "$--gray-400",
+                          "content": "Enter tracking number (e.g., 1Z999AA10123456784)",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uB3Jz",
+                  "name": "modalFooter",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "top": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "gap": 12,
+                  "padding": 24,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "ELzZN",
+                      "type": "ref",
+                      "ref": "qEkcI",
+                      "name": "cancelBtn",
+                      "descendants": {
+                        "fyFeY": {
+                          "enabled": false
+                        },
+                        "XN7Up": {
+                          "content": "Cancel"
+                        }
+                      }
+                    },
+                    {
+                      "id": "CjelL",
+                      "type": "ref",
+                      "ref": "9FejO",
+                      "name": "continueBtn",
+                      "descendants": {
+                        "TCXbQ": {
+                          "iconFontName": "arrow-right"
+                        },
+                        "Ez2qo": {
+                          "content": "Continue"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "csn0e",
+      "x": 4920,
+      "y": 380,
+      "name": "Orders - Confirm Order",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$--bg-page",
+      "children": [
+        {
+          "id": "fZRJN",
+          "type": "ref",
+          "ref": "YT2A0",
+          "height": "fill_container",
+          "name": "confirmSidebar",
+          "descendants": {
+            "WLUVp": {
+              "children": [
+                {
+                  "id": "EG2NN",
+                  "type": "ref",
+                  "ref": "5qhcW",
+                  "width": "fill_container",
+                  "descendants": {
+                    "1LpDZ": {
+                      "iconFontName": "layout-dashboard"
+                    },
+                    "V7NLV": {
+                      "content": "Dashboard"
+                    }
+                  }
+                },
+                {
+                  "id": "CINXv",
+                  "type": "ref",
+                  "ref": "80kSU",
+                  "width": "fill_container",
+                  "descendants": {
+                    "nWQkx": {
+                      "iconFontName": "package"
+                    },
+                    "CgtDl": {
+                      "content": "Orders"
+                    }
+                  }
+                },
+                {
+                  "id": "tslm4",
+                  "type": "ref",
+                  "ref": "5qhcW",
+                  "width": "fill_container",
+                  "descendants": {
+                    "1LpDZ": {
+                      "iconFontName": "rotate-ccw"
+                    },
+                    "V7NLV": {
+                      "content": "Returns"
+                    }
+                  }
+                },
+                {
+                  "id": "Jjmge",
+                  "type": "ref",
+                  "ref": "5qhcW",
+                  "width": "fill_container",
+                  "descendants": {
+                    "1LpDZ": {
+                      "iconFontName": "message-circle"
+                    },
+                    "V7NLV": {
+                      "content": "Chat"
+                    }
+                  }
+                },
+                {
+                  "id": "thbiB",
+                  "type": "ref",
+                  "ref": "5qhcW",
+                  "width": "fill_container",
+                  "descendants": {
+                    "1LpDZ": {
+                      "iconFontName": "settings"
+                    },
+                    "V7NLV": {
+                      "content": "Settings"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "9l4pX",
+          "name": "confirmMainContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            32,
+            40
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "PoDcF",
+              "name": "confPageHeader",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "2ysZZ",
+                  "name": "confTitleGroup",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Vrsv9",
+                      "name": "confPageTitle",
+                      "fill": "$--black-primary",
+                      "content": "Orders",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 28,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "4f4Im",
+                      "name": "confPageSubtitle",
+                      "fill": "$--gray-700",
+                      "content": "Manage and track all your orders in one place",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "9yRDQ",
+          "name": "confModalOverlay",
+          "width": 1157,
+          "height": 900,
+          "fill": "rgba(0,0,0,0.5)",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "yo82H",
+              "name": "confModalCard",
+              "width": 560,
+              "fill": "$--bg-card",
+              "cornerRadius": "$--radius-lg",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "v2fpV",
+                  "name": "confModalHeader",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "bottom": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "padding": 24,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "tGBLe",
+                      "name": "confModalTitleGroup",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "g97l9",
+                          "name": "confModalTitle",
+                          "fill": "$--black-primary",
+                          "content": "Confirm Order Details",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "CjxIl",
+                          "name": "confModalSubtitle",
+                          "fill": "$--gray-700",
+                          "content": "Review the extracted information before adding",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nimm9",
+                      "name": "confCloseBtn",
+                      "width": 32,
+                      "height": 32,
+                      "cornerRadius": "$--radius-sm",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "2QEwv",
+                          "name": "confCloseIcon",
+                          "width": 18,
+                          "height": 18,
+                          "iconFontName": "x",
+                          "iconFontFamily": "lucide",
+                          "fill": "$--gray-700"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DfDaK",
+                  "name": "confModalBody",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "P6lJq",
+                      "name": "imagePreviewRow",
+                      "width": "fill_container",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vbxom",
+                          "name": "imagePreview",
+                          "width": 120,
+                          "height": 160,
+                          "fill": "$--bg-surface",
+                          "cornerRadius": "$--radius-sm",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$--border"
+                          },
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "4EUR2",
+                              "name": "previewIcon",
+                              "width": 32,
+                              "height": 32,
+                              "iconFontName": "receipt",
+                              "iconFontFamily": "lucide",
+                              "fill": "$--gray-400"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rdP0o",
+                          "name": "extractedInfo",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "8g7QO",
+                              "name": "successBadge",
+                              "fill": "$--green-light",
+                              "cornerRadius": 100,
+                              "gap": 6,
+                              "padding": [
+                                6,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "n2ie4",
+                                  "name": "successIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "sparkles",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$--green-success"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "N1Yiz",
+                                  "name": "successText",
+                                  "fill": "$--green-success",
+                                  "content": "AI extracted order details",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "KvO3T",
+                              "name": "extractedMerchant",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "laiXK",
+                                  "name": "merchantLabel",
+                                  "fill": "$--gray-700",
+                                  "content": "Merchant",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "XlROZ",
+                                  "name": "merchantValue",
+                                  "fill": "$--black-primary",
+                                  "content": "Apple Store",
+                                  "fontFamily": "Space Grotesk",
+                                  "fontSize": 16,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "IBatS",
+                              "name": "extractedItems",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "WPNcu",
+                                  "name": "itemsLabel",
+                                  "fill": "$--gray-700",
+                                  "content": "Items",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "csNjL",
+                                  "name": "itemsValue",
+                                  "fill": "$--black-primary",
+                                  "content": "MacBook Pro 14\" M3 Pro",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YxHYZ",
+                      "name": "detailsRow",
+                      "width": "fill_container",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "mYszv",
+                          "name": "trackingField",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Tox19",
+                              "name": "trackingLabel",
+                              "fill": "$--gray-700",
+                              "content": "Tracking Number",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "JYfmP",
+                              "name": "trackingInputConf",
+                              "width": "fill_container",
+                              "fill": "$--bg-surface",
+                              "cornerRadius": "$--radius-sm",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "$--border"
+                              },
+                              "padding": [
+                                10,
+                                12
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "sQui1",
+                                  "name": "trackingInputText",
+                                  "fill": "$--black-primary",
+                                  "content": "1Z999AA10123456784",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "no5b0",
+                          "name": "dateField",
+                          "width": 140,
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "W7Wcx",
+                              "name": "dateLabel",
+                              "fill": "$--gray-700",
+                              "content": "Order Date",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "7JGhK",
+                              "name": "dateInputConf",
+                              "width": "fill_container",
+                              "fill": "$--bg-surface",
+                              "cornerRadius": "$--radius-sm",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "$--border"
+                              },
+                              "padding": [
+                                10,
+                                12
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "lA7zY",
+                                  "name": "dateInputText",
+                                  "fill": "$--black-primary",
+                                  "content": "Jan 27, 2026",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "aYdfe",
+                  "name": "confModalFooter",
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "top": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "gap": 12,
+                  "padding": 24,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "womPz",
+                      "type": "ref",
+                      "ref": "1GHfP",
+                      "name": "backBtn",
+                      "descendants": {
+                        "OZYmF": {
+                          "iconFontName": "arrow-left"
+                        },
+                        "gDcZ1": {
+                          "content": "Back"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BmHrF",
+                      "name": "footerRight",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "id": "99Mcf",
+                          "type": "ref",
+                          "ref": "qEkcI",
+                          "name": "confCancelBtn",
+                          "descendants": {
+                            "fyFeY": {
+                              "enabled": false
+                            },
+                            "XN7Up": {
+                              "content": "Cancel"
+                            }
+                          }
+                        },
+                        {
+                          "id": "elouC",
+                          "type": "ref",
+                          "ref": "9FejO",
+                          "name": "addOrderBtnConf",
+                          "descendants": {
+                            "TCXbQ": {
+                              "iconFontName": "check"
+                            },
+                            "Ez2qo": {
+                              "content": "Add Order"
+                            }
+                          }
+                        }
+                      ]
                     }
                   ]
                 }

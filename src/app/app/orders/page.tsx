@@ -6,8 +6,9 @@ import Image from "next/image";
 import { mockOrders } from "@/data";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Search, Filter, Package, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Filter, Package, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import type { Order } from "@/types";
+import { AddOrderModal } from "@/components/orders";
 
 const tabs = [
   { id: "all", label: "All Orders" },
@@ -45,6 +46,7 @@ export default function OrdersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [addOrderOpen, setAddOrderOpen] = useState(false);
   const itemsPerPage = 5;
 
   const filterOrders = () => {
@@ -117,8 +119,22 @@ export default function OrdersPage() {
             <Filter className="h-4 w-4 text-[#7A7A7A]" />
             Filter
           </button>
+          {/* Add Order */}
+          <button
+            onClick={() => setAddOrderOpen(true)}
+            className="flex items-center gap-2 rounded bg-[#3B82F6] px-5 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2563EB]"
+          >
+            <Plus className="h-4 w-4" />
+            Add Order
+          </button>
         </div>
       </div>
+
+      {/* Add Order Modal */}
+      <AddOrderModal
+        open={addOrderOpen}
+        onOpenChange={setAddOrderOpen}
+      />
 
       {/* Tabs */}
       <div className="border-b border-[#E8E8E8]">

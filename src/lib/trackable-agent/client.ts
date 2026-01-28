@@ -2,6 +2,9 @@ import type {
   IngestEmailRequest,
   IngestEmailResponse,
   EmailIngestionResult,
+  IngestImageRequest,
+  IngestImageResponse,
+  ImageIngestionResult,
 } from "./types";
 
 export function getTrackableApiUrl(): string {
@@ -46,6 +49,48 @@ export async function ingestEmail(
     };
   } catch (error) {
     console.error("Email ingestion request failed:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+export async function ingestImage(
+  request: IngestImageRequest,
+  userId: string,
+): Promise<ImageIngestionResult> {
+  const trackableApiUrl = getTrackableApiUrl();
+
+  try {
+    const response = await fetch(`${trackableApiUrl}/api/v1/ingest/image`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-ID": userId,
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Image ingestion error:", response.status, errorText);
+      return {
+        success: false,
+        error: `Ingestion failed: ${response.status}`,
+      };
+    }
+
+    const data: IngestImageResponse = await response.json();
+    return {
+      success: true,
+      job_id: data.job_id,
+      source_id: data.source_id,
+      status: data.status,
+      extracted: data.extracted,
+    };
+  } catch (error) {
+    console.error("Image ingestion request failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
