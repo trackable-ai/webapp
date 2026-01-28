@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Mail, Shield, Package } from "lucide-react";
+import { Mail, Shield } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 function LoginContent() {
@@ -37,9 +38,13 @@ function LoginContent() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
-            <Package className="h-6 w-6 text-primary-foreground" />
-          </div>
+          <Image
+            src="/logo.svg"
+            alt="Trackable"
+            width={48}
+            height={48}
+            className="mx-auto mb-4"
+          />
           <CardTitle>Welcome to Trackable</CardTitle>
           <CardDescription>
             Connect your Gmail to automatically track your orders

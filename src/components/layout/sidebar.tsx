@@ -12,8 +12,8 @@ import {
   RotateCcw,
   MessageCircle,
   Settings,
-  PackageCheck,
 } from "lucide-react";
+import { Logo } from "@/components/common";
 
 const navigation = [
   { name: "Dashboard", href: "/app", icon: LayoutDashboard },
@@ -71,14 +71,7 @@ export function Sidebar() {
         {/* Top section */}
         <div className="flex flex-col gap-6">
           {/* Logo */}
-          <div className="flex items-center gap-2.5 px-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded bg-[#3B82F6]">
-              <PackageCheck className="h-5 w-5 text-white" />
-            </div>
-            <span className="font-heading text-lg font-semibold text-[#0D0D0D]">
-              Trackable
-            </span>
-          </div>
+          <Logo size="md" className="px-2" />
 
           {/* Navigation */}
           <nav className="flex flex-col gap-1">

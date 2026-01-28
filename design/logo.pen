@@ -1,0 +1,43 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bi8Au",
+      "x": 0,
+      "y": 0,
+      "name": "Frame",
+      "clip": true,
+      "width": 800,
+      "height": 600,
+      "fill": "#FFFFFF",
+      "layout": "none"
+    },
+    {
+      "type": "frame",
+      "id": "uIKUU",
+      "x": 0,
+      "y": 0,
+      "name": "Trackable Logo",
+      "width": 128,
+      "height": 128,
+      "fill": "#3B82F6",
+      "cornerRadius": 24,
+      "layout": "none",
+      "children": [
+        {
+          "type": "icon_font",
+          "id": "DWZBO",
+          "x": 32,
+          "y": 32,
+          "name": "Package Icon",
+          "width": 64,
+          "height": 64,
+          "iconFontName": "package-check",
+          "iconFontFamily": "lucide",
+          "fill": "#FFFFFF"
+        }
+      ]
+    }
+  ]
+}

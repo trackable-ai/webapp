@@ -1,6 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
-  Package,
   Mail,
   ArrowRight,
   Sparkles,
@@ -23,10 +23,14 @@ export default function LandingPage() {
           {/* Left: Logo + Nav */}
           <div className="flex items-center gap-12">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded bg-[#3B82F6]">
-                <Package className="h-[18px] w-[18px] text-white" />
-              </div>
+            <Link href="/" className="flex items-center gap-2.5">
+              <Image
+                src="/logo.svg"
+                alt="Trackable"
+                width={32}
+                height={32}
+                className="shrink-0"
+              />
               <span className="font-heading text-xl font-semibold text-[#0D0D0D]">
                 Trackable
               </span>
@@ -470,10 +474,14 @@ export default function LandingPage() {
           <div className="flex justify-between">
             {/* Brand */}
             <div className="flex w-[300px] flex-col gap-4">
-              <Link href="/" className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded bg-[#3B82F6]">
-                  <Package className="h-4 w-4 text-white" />
-                </div>
+              <Link href="/" className="flex items-center gap-2.5">
+                <Image
+                  src="/logo.svg"
+                  alt="Trackable"
+                  width={28}
+                  height={28}
+                  className="shrink-0"
+                />
                 <span className="font-heading text-lg font-semibold text-[#0D0D0D]">
                   Trackable
                 </span>

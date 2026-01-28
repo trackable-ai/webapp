@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { Sidebar, MobileNav } from "@/components/layout";
-import { Menu, PackageCheck } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/common";
 
 export default function DashboardLayout({
   children,
@@ -33,14 +34,7 @@ export default function DashboardLayout({
             <Menu className="h-5 w-5" />
             <span className="sr-only">Open sidebar</span>
           </Button>
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded bg-[#3B82F6]">
-              <PackageCheck className="h-4 w-4 text-white" />
-            </div>
-            <span className="font-heading text-base font-semibold text-[#0D0D0D]">
-              Trackable
-            </span>
-          </div>
+          <Logo size="sm" />
         </header>
 
         {/* Page content */}

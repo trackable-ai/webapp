@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, Search, Menu, Sparkles, LogOut } from "lucide-react";
+import { Bell, Search, Menu, LogOut } from "lucide-react";
+import { Logo } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -87,12 +88,7 @@ export function Header({ onMenuClick }: HeaderProps) {
       </Button>
 
       {/* Mobile logo */}
-      <div className="flex items-center gap-2 lg:hidden">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-          <Sparkles className="h-4 w-4 text-primary-foreground" />
-        </div>
-        <span className="text-lg font-semibold">Trackable</span>
-      </div>
+      <Logo size="md" className="lg:hidden" />
 
       {/* Separator */}
       <div className="h-6 w-px bg-border lg:hidden" />
