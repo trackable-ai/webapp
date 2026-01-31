@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import type { GmailTokens } from "./types";
 
 export async function getGmailClient() {
@@ -74,9 +74,10 @@ export async function getGmailConnectionStatus() {
 /**
  * Get Gmail client for a specific user by ID.
  * Used by webhook handler where there's no session context.
+ * Uses admin client to bypass RLS.
  */
 export async function getGmailClientByUserId(userId: string) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data: tokens, error } = await supabase
     .from("user_gmail_tokens")
