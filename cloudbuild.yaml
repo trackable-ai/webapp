@@ -1,4 +1,28 @@
+# Trackable Web App - Cloud Build Configuration
+#
+# This app is deployed to Google Cloud Run via Cloud Build triggers.
+#
+# Setup Instructions:
+# 1. Create a Cloud Build trigger in GCP Console watching the `main` branch
+# 2. Configure the trigger to use this file (cloudbuild.yaml)
+# 3. Add the following substitution variables in the trigger settings:
+#    - _NEXT_PUBLIC_SUPABASE_URL: Your Supabase project URL
+#    - _NEXT_PUBLIC_SUPABASE_ANON_KEY: Your Supabase anon/public key
+#
+# Runtime Environment Variables:
+# These must be set in Cloud Run service configuration (not here):
+#    - GOOGLE_GENERATIVE_AI_API_KEY: Gemini API key
+#    - GOOGLE_CLIENT_ID: OAuth client ID
+#    - GOOGLE_CLIENT_SECRET: OAuth client secret
+#    - TRACKABLE_API_URL: Backend API URL (https://api.usetrackable.ai)
+#    - GMAIL_PUBSUB_TOPIC: Pub/Sub topic for Gmail push notifications
+#    - WEBHOOK_SECRET: Secret for validating Pub/Sub webhooks
+#
+# Note: NEXT_PUBLIC_* variables are embedded at build time and visible in
+# the client bundle. Other env vars are only available server-side at runtime.
+
 steps:
+  # Build the Next.js application
   - name: 'node:20'
     entrypoint: 'bash'
     args:
