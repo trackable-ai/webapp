@@ -5,7 +5,8 @@ import type { GmailTokens } from "./types";
 export interface WatchResult {
   success: boolean;
   expiration: string | null;
-  resourceId: string | null;
+  /** The historyId at the time the watch was set up */
+  historyId: string | null;
 }
 
 /**
@@ -46,7 +47,8 @@ export async function setupWatch(
   const expiration = response.data.expiration
     ? new Date(parseInt(response.data.expiration)).toISOString()
     : null;
-  const resourceId = response.data.historyId || null;
+  // The watch API returns historyId (stored in watch_resource_id column for tracking)
+  const historyId = response.data.historyId || null;
 
   // Store watch info in database
   const supabase = await createClient();
@@ -54,7 +56,7 @@ export async function setupWatch(
     .from("user_gmail_tokens")
     .update({
       watch_expiration: expiration,
-      watch_resource_id: resourceId,
+      watch_resource_id: historyId,
       updated_at: new Date().toISOString(),
     })
     .eq("user_id", userId);
@@ -62,7 +64,7 @@ export async function setupWatch(
   return {
     success: true,
     expiration,
-    resourceId,
+    historyId,
   };
 }
 

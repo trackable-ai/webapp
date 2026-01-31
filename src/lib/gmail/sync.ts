@@ -133,32 +133,42 @@ export async function fetchAndProcessMessages(
 /**
  * Get new messages since last sync using History API.
  * Shared between manual sync and webhook processing.
+ * Handles pagination to ensure all messages are fetched.
  */
 export async function partialSync(
   gmail: gmail_v1.Gmail,
   startHistoryId: string
 ): Promise<{ messageIds: string[]; historyId: string | null }> {
-  const response = await gmail.users.history.list({
-    userId: "me",
-    startHistoryId,
-    historyTypes: ["messageAdded"],
-  });
-
-  const history = response.data as GmailHistoryResponse;
   const messageIds: string[] = [];
+  let pageToken: string | undefined;
+  let latestHistoryId: string | null = null;
 
-  if (history.history) {
-    for (const record of history.history) {
-      if (record.messagesAdded) {
-        for (const added of record.messagesAdded) {
-          messageIds.push(added.message.id);
+  do {
+    const response = await gmail.users.history.list({
+      userId: "me",
+      startHistoryId,
+      historyTypes: ["messageAdded"],
+      pageToken,
+    });
+
+    const history = response.data as GmailHistoryResponse;
+    latestHistoryId = history.historyId || latestHistoryId;
+
+    if (history.history) {
+      for (const record of history.history) {
+        if (record.messagesAdded) {
+          for (const added of record.messagesAdded) {
+            messageIds.push(added.message.id);
+          }
         }
       }
     }
-  }
+
+    pageToken = history.nextPageToken;
+  } while (pageToken);
 
   return {
     messageIds,
-    historyId: history.historyId || null,
+    historyId: latestHistoryId,
   };
 }

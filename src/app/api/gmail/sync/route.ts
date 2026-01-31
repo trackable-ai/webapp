@@ -1,14 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getGmailClient } from "@/lib/gmail/client";
 import { NextResponse } from "next/server";
-import type {
-  GmailMessage,
-  GmailMessagePart,
-  ParsedOrderEmail,
-  GmailSyncResult,
-  GmailHistoryResponse,
-} from "@/lib/gmail/types";
-import { ingestEmail } from "@/lib/trackable-agent/client";
+import type { GmailSyncResult } from "@/lib/gmail/types";
+import { fetchAndProcessMessages, partialSync } from "@/lib/gmail/sync";
 import type { gmail_v1 } from "googleapis";
 
 const ORDER_KEYWORDS = [
@@ -22,85 +16,6 @@ const ORDER_KEYWORDS = [
   "tracking number",
 ];
 
-// Recursively find text content in MIME parts
-function findTextBody(
-  part: GmailMessagePart,
-  preferredType: "text/plain" | "text/html" = "text/plain",
-): string {
-  // Direct body data - check if this part matches what we want
-  if (part.body?.data && part.mimeType === preferredType) {
-    return Buffer.from(part.body.data, "base64").toString("utf-8");
-  }
-
-  // For parts without mimeType (top-level), check if body has data
-  if (part.body?.data && !part.mimeType && !part.parts) {
-    return Buffer.from(part.body.data, "base64").toString("utf-8");
-  }
-
-  // Recurse into nested parts
-  if (part.parts) {
-    // First, look for the preferred type at this level
-    const preferred = part.parts.find((p) => p.mimeType === preferredType);
-    if (preferred?.body?.data) {
-      return Buffer.from(preferred.body.data, "base64").toString("utf-8");
-    }
-
-    // Recurse into multipart/* containers
-    for (const subPart of part.parts) {
-      if (subPart.mimeType?.startsWith("multipart/") || subPart.parts) {
-        const body = findTextBody(subPart, preferredType);
-        if (body) return body;
-      }
-    }
-  }
-
-  return "";
-}
-
-// Extract body, preferring text/plain but falling back to text/html
-function extractEmailBody(payload: GmailMessagePart): string {
-  // Try text/plain first
-  let body = findTextBody(payload, "text/plain");
-  if (body) return body;
-
-  // Fall back to text/html (strip tags for plain text)
-  body = findTextBody(payload, "text/html");
-  if (body) {
-    // Basic HTML tag stripping
-    return body
-      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/&nbsp;/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  return "";
-}
-
-function parseOrderEmail(message: GmailMessage): ParsedOrderEmail {
-  const headers = message.payload.headers;
-  const getHeader = (name: string) =>
-    headers.find((h) => h.name.toLowerCase() === name.toLowerCase())?.value;
-
-  const subject = getHeader("subject") || "";
-  const from = getHeader("from") || "";
-  const date = new Date(parseInt(message.internalDate));
-
-  // Extract body content (handles nested MIME structures)
-  const body = extractEmailBody(message.payload);
-
-  return {
-    messageId: message.id,
-    from,
-    subject,
-    date,
-    snippet: message.snippet,
-    rawBody: body,
-  };
-}
-
 // Format date for Gmail query (YYYY/MM/DD)
 function formatDateForGmail(date: Date): string {
   return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
@@ -109,59 +24,6 @@ function formatDateForGmail(date: Date): string {
 // Build the keyword search query
 function buildKeywordQuery(): string {
   return ORDER_KEYWORDS.map((k) => `"${k}"`).join(" OR ");
-}
-
-// Fetch and process messages by IDs
-async function fetchAndProcessMessages(
-  gmail: gmail_v1.Gmail,
-  messageIds: string[],
-  userId: string,
-): Promise<GmailSyncResult["emails"]> {
-  const results: GmailSyncResult["emails"] = [];
-
-  for (const messageId of messageIds) {
-    try {
-      const detail = await gmail.users.messages.get({
-        userId: "me",
-        id: messageId,
-        format: "full",
-      });
-
-      const parsed = parseOrderEmail(detail.data as GmailMessage);
-
-      // Ingest email
-      let ingestion: { success: boolean; error?: string };
-      try {
-        const result = await ingestEmail(
-          {
-            email_content: parsed.rawBody,
-            email_subject: parsed.subject,
-            email_from: parsed.from,
-          },
-          userId,
-        );
-        ingestion = { success: result.success, error: result.error };
-      } catch (err) {
-        ingestion = {
-          success: false,
-          error: err instanceof Error ? err.message : "Ingestion failed",
-        };
-      }
-
-      results.push({
-        id: parsed.messageId,
-        subject: parsed.subject,
-        from: parsed.from,
-        date: parsed.date,
-        snippet: parsed.snippet,
-        ingestion,
-      });
-    } catch (err) {
-      console.error(`Failed to fetch message ${messageId}:`, err);
-    }
-  }
-
-  return results;
 }
 
 /**
@@ -229,43 +91,6 @@ async function dateFilteredSync(
   }
 
   return { messageIds, historyId };
-}
-
-/**
- * Calls history.list API to get new messages since last sync
- *
- * @param gmail
- * @param startHistoryId
- * @returns
- */
-async function partialSync(
-  gmail: gmail_v1.Gmail,
-  startHistoryId: string,
-): Promise<{ messageIds: string[]; historyId: string | null }> {
-  const response = await gmail.users.history.list({
-    userId: "me",
-    startHistoryId,
-    historyTypes: ["messageAdded"],
-  });
-
-  const history = response.data as GmailHistoryResponse;
-  const messageIds: string[] = [];
-
-  // Extract message IDs from messagesAdded events
-  if (history.history) {
-    for (const record of history.history) {
-      if (record.messagesAdded) {
-        for (const added of record.messagesAdded) {
-          messageIds.push(added.message.id);
-        }
-      }
-    }
-  }
-
-  return {
-    messageIds,
-    historyId: history.historyId || null,
-  };
 }
 
 export async function POST(request: Request) {

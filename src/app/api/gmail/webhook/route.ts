@@ -85,6 +85,7 @@ export async function POST(request: Request) {
     }
 
     // Skip if the notification historyId is not newer
+    // Use BigInt comparison because historyId values can exceed Number.MAX_SAFE_INTEGER
     if (BigInt(notification.historyId) <= BigInt(lastHistoryId)) {
       console.log("Webhook: History ID not newer, skipping");
       return NextResponse.json({ status: "already_synced" });
