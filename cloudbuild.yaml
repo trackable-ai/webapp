@@ -1,18 +1,18 @@
 # Trackable Web App - Cloud Build Configuration
 #
-# This app is deployed to Google Cloud Run via Cloud Build triggers.
+# Auto-deploys to Cloud Run on push to main using Google Cloud Buildpacks.
+# No Dockerfile needed - buildpacks auto-detect Next.js.
 #
 # Setup Instructions:
 # 1. Create a Cloud Build trigger in GCP Console watching the `main` branch
 # 2. Configure the trigger to use this file (cloudbuild.yaml)
 # 3. Add the following substitution variables in the trigger settings:
-#    - _NEXT_PUBLIC_SUPABASE_URL: Your Supabase project URL
-#    - _NEXT_PUBLIC_SUPABASE_ANON_KEY: Your Supabase anon/public key
 #    - _SERVICE_NAME: Cloud Run service name (e.g., trackable-webapp)
 #    - _DEPLOY_REGION: Deployment region (e.g., us-central1)
+#    - _NEXT_PUBLIC_SUPABASE_URL: Your Supabase project URL
+#    - _NEXT_PUBLIC_SUPABASE_ANON_KEY: Your Supabase anon/public key
 #
-# Runtime Environment Variables:
-# These must be set in Cloud Run service configuration (not here):
+# Runtime Environment Variables (set in Cloud Run service, not here):
 #    - GOOGLE_GENERATIVE_AI_API_KEY: Gemini API key
 #    - GOOGLE_CLIENT_ID: OAuth client ID
 #    - GOOGLE_CLIENT_SECRET: OAuth client secret
