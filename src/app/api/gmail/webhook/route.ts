@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { getGmailClientByUserId } from "@/lib/gmail/client";
 import { partialSync, fetchAndProcessMessages } from "@/lib/gmail/sync";
 import type { GmailTokens } from "@/lib/gmail/types";
@@ -58,7 +58,8 @@ export async function POST(request: Request) {
     });
 
     // Look up user by email address in user_gmail_tokens
-    const supabase = await createClient();
+    // Use admin client to bypass RLS (webhook has no user session)
+    const supabase = createAdminClient();
 
     const { data: tokens } = await supabase
       .from("user_gmail_tokens")
