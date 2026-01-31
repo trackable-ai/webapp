@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Trackable
 
-## Getting Started
+Agentic AI tool for post-purchase experiences.
 
-First, run the development server:
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See [cloudbuild.yaml](cloudbuild.yaml) for Cloud Run deployment instructions.
 
-## Learn More
+## API Routes
 
-To learn more about Next.js, take a look at the following resources:
+| Endpoint | Method | Auth | DB Client | Description |
+|----------|--------|------|-----------|-------------|
+| `/api/agent/chat` | POST | User session | `createClient` | AI chat proxy to trackable-agent |
+| `/api/agent/chat` | DELETE | User session | `createClient` | Clear chat session |
+| `/api/agent/chat` | GET | None | None | Health check |
+| `/api/orders` | POST | User session | `createClient` | Create order |
+| `/api/orders/upload` | POST | User session | `createClient` | Upload order image |
+| `/api/gmail/sync` | GET | User session | `createClient` | Get sync status |
+| `/api/gmail/sync` | POST | User session | `createClient` | Trigger email sync |
+| `/api/gmail/watch` | GET | User session | `createClient` | Get watch status |
+| `/api/gmail/watch` | POST | User session | `createClient` | Setup Gmail watch |
+| `/api/gmail/watch` | DELETE | User session | `createClient` | Stop Gmail watch |
+| `/api/gmail/webhook` | POST | Webhook secret | `createAdminClient` | Pub/Sub push notifications |
+| `/api/auth/callback` | GET | OAuth code | `createClient` | OAuth callback |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Supabase Clients
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **`createClient`**: Uses user session from cookies. Subject to RLS policies. Use for user-initiated requests.
+- **`createAdminClient`**: Uses service role key. Bypasses RLS. Use for webhooks, cron jobs, or any server-to-server context without a user session.
