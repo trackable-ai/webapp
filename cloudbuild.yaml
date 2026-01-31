@@ -21,6 +21,9 @@
 # Note: NEXT_PUBLIC_* variables are embedded at build time and visible in
 # the client bundle. Other env vars are only available server-side at runtime.
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
   # Build the Next.js application
   - name: 'node:20'
