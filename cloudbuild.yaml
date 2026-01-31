@@ -9,7 +9,7 @@
 #    - _NEXT_PUBLIC_SUPABASE_URL: Your Supabase project URL
 #    - _NEXT_PUBLIC_SUPABASE_ANON_KEY: Your Supabase anon/public key
 #    - _SERVICE_NAME: Cloud Run service name (e.g., trackable-webapp)
-#    - _REGION: Deployment region (e.g., us-central1)
+#    - _DEPLOY_REGION: Deployment region (e.g., us-central1)
 #
 # Runtime Environment Variables:
 # These must be set in Cloud Run service configuration (not here):
@@ -35,5 +35,5 @@ steps:
       - 'deploy'
       - '${_SERVICE_NAME}'
       - '--source=.'
-      - '--region=${_REGION}'
+      - '--region=${_DEPLOY_REGION}'
       - '--set-build-env-vars=NEXT_PUBLIC_SUPABASE_URL=${_NEXT_PUBLIC_SUPABASE_URL},NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}'
