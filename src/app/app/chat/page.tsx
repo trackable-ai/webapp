@@ -12,7 +12,9 @@ function getMessageContent(message: UIMessage): string {
     return "";
   }
   return message.parts
-    .filter((part): part is { type: "text"; text: string } => part.type === "text")
+    .filter(
+      (part): part is { type: "text"; text: string } => part.type === "text",
+    )
     .map((part) => part.text)
     .join("");
 }
@@ -29,7 +31,7 @@ export default function ChatPage() {
 
   const transport = useMemo(
     () => new DefaultChatTransport({ api: "/api/agent/chat" }),
-    []
+    [],
   );
 
   const { messages, sendMessage, status, error } = useChat({
@@ -43,10 +45,10 @@ export default function ChatPage() {
             type: "text" as const,
             text: `Hi there! I'm Trackable, your personal shopping assistant. I can help you with:
 
-• **Tracking orders** - Check delivery status and ETAs
-• **Managing returns** - Understand policies and deadlines
-• **Return deadlines** - Never miss a return window
-• **Support** - Help contacting merchants
+•  Tracking orders - Check delivery status and ETAs
+•  Managing returns - Understand policies and deadlines
+•  Return deadlines - Never miss a return window
+•  Support - Help contacting merchants
 
 I'm currently tracking 5 orders for you. What would you like to know?`,
           },

@@ -5,9 +5,11 @@ import type {
   GmailMessage,
   GmailMessagePart,
   ParsedOrderEmail,
+  GmailSyncResult,
+  GmailHistoryResponse,
 } from "@/lib/gmail/types";
 import { ingestEmail } from "@/lib/trackable-agent/client";
-import type { EmailIngestionResult } from "@/lib/trackable-agent/types";
+import type { gmail_v1 } from "googleapis";
 
 const ORDER_KEYWORDS = [
   "order confirmation",
@@ -99,6 +101,173 @@ function parseOrderEmail(message: GmailMessage): ParsedOrderEmail {
   };
 }
 
+// Format date for Gmail query (YYYY/MM/DD)
+function formatDateForGmail(date: Date): string {
+  return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
+}
+
+// Build the keyword search query
+function buildKeywordQuery(): string {
+  return ORDER_KEYWORDS.map((k) => `"${k}"`).join(" OR ");
+}
+
+// Fetch and process messages by IDs
+async function fetchAndProcessMessages(
+  gmail: gmail_v1.Gmail,
+  messageIds: string[],
+  userId: string,
+): Promise<GmailSyncResult["emails"]> {
+  const results: GmailSyncResult["emails"] = [];
+
+  for (const messageId of messageIds) {
+    try {
+      const detail = await gmail.users.messages.get({
+        userId: "me",
+        id: messageId,
+        format: "full",
+      });
+
+      const parsed = parseOrderEmail(detail.data as GmailMessage);
+
+      // Ingest email
+      let ingestion: { success: boolean; error?: string };
+      try {
+        const result = await ingestEmail(
+          {
+            email_content: parsed.rawBody,
+            email_subject: parsed.subject,
+            email_from: parsed.from,
+          },
+          userId,
+        );
+        ingestion = { success: result.success, error: result.error };
+      } catch (err) {
+        ingestion = {
+          success: false,
+          error: err instanceof Error ? err.message : "Ingestion failed",
+        };
+      }
+
+      results.push({
+        id: parsed.messageId,
+        subject: parsed.subject,
+        from: parsed.from,
+        date: parsed.date,
+        snippet: parsed.snippet,
+        ingestion,
+      });
+    } catch (err) {
+      console.error(`Failed to fetch message ${messageId}:`, err);
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Searches for messages with keywords. No filters.
+ *
+ * @param gmail
+ * @param maxResults
+ * @returns
+ */
+async function fullSync(
+  gmail: gmail_v1.Gmail,
+  maxResults: number,
+): Promise<{ messageIds: string[]; historyId: string | null }> {
+  const query = buildKeywordQuery();
+  const response = await gmail.users.messages.list({
+    userId: "me",
+    q: query,
+    maxResults,
+  });
+
+  const messages = response.data.messages || [];
+  const messageIds = messages.map((m) => m.id!);
+
+  // Get historyId from the most recent message
+  let historyId: string | null = null;
+  if (messages.length > 0) {
+    const firstMsg = await gmail.users.messages.get({
+      userId: "me",
+      id: messages[0].id!,
+      format: "minimal",
+    });
+    historyId = firstMsg.data.historyId || null;
+  }
+
+  return { messageIds, historyId };
+}
+
+// Date-filtered sync: search with keywords + after:date
+async function dateFilteredSync(
+  gmail: gmail_v1.Gmail,
+  lastSyncAt: Date,
+  maxResults: number,
+): Promise<{ messageIds: string[]; historyId: string | null }> {
+  const dateStr = formatDateForGmail(lastSyncAt);
+  const query = `(${buildKeywordQuery()}) after:${dateStr}`;
+
+  const response = await gmail.users.messages.list({
+    userId: "me",
+    q: query,
+    maxResults,
+  });
+
+  const messages = response.data.messages || [];
+  const messageIds = messages.map((m) => m.id!);
+
+  // Get historyId from the most recent message
+  let historyId: string | null = null;
+  if (messages.length > 0) {
+    const firstMsg = await gmail.users.messages.get({
+      userId: "me",
+      id: messages[0].id!,
+      format: "minimal",
+    });
+    historyId = firstMsg.data.historyId || null;
+  }
+
+  return { messageIds, historyId };
+}
+
+/**
+ * Calls history.list API to get new messages since last sync
+ *
+ * @param gmail
+ * @param startHistoryId
+ * @returns
+ */
+async function partialSync(
+  gmail: gmail_v1.Gmail,
+  startHistoryId: string,
+): Promise<{ messageIds: string[]; historyId: string | null }> {
+  const response = await gmail.users.history.list({
+    userId: "me",
+    startHistoryId,
+    historyTypes: ["messageAdded"],
+  });
+
+  const history = response.data as GmailHistoryResponse;
+  const messageIds: string[] = [];
+
+  // Extract message IDs from messagesAdded events
+  if (history.history) {
+    for (const record of history.history) {
+      if (record.messagesAdded) {
+        for (const added of record.messagesAdded) {
+          messageIds.push(added.message.id);
+        }
+      }
+    }
+  }
+
+  return {
+    messageIds,
+    historyId: history.historyId || null,
+  };
+}
+
 export async function POST(request: Request) {
   try {
     const supabase = await createClient();
@@ -111,80 +280,95 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json().catch(() => ({}));
-    const maxResults = body.maxResults || 20;
+    const maxResults = body.maxResults || 50;
+    const forceFullSync = body.forceFullSync || false;
 
     const gmail = await getGmailClient();
 
-    // Build search query for order-related emails
-    const query = ORDER_KEYWORDS.map((k) => `"${k}"`).join(" OR ");
+    // Get current sync state from database
+    const { data: tokenData } = await supabase
+      .from("user_gmail_tokens")
+      .select("last_history_id, last_sync_at")
+      .eq("user_id", user.id)
+      .single();
 
-    const response = await gmail.users.messages.list({
-      userId: "me",
-      q: query,
-      maxResults,
-    });
+    const lastHistoryId = forceFullSync ? null : tokenData?.last_history_id;
+    const lastSyncAt = tokenData?.last_sync_at
+      ? new Date(tokenData.last_sync_at)
+      : null;
 
-    const messages = response.data.messages || [];
-    const parsedEmails: ParsedOrderEmail[] = [];
+    let syncType: GmailSyncResult["syncType"];
+    let messageIds: string[];
+    let newHistoryId: string | null;
 
-    for (const msg of messages) {
-      const detail = await gmail.users.messages.get({
-        userId: "me",
-        id: msg.id!,
-        format: "full",
-      });
+    if (!lastHistoryId) {
+      // First sync or forced full sync
+      console.log("Performing full sync");
+      syncType = "full";
+      const result = await fullSync(gmail, maxResults);
+      messageIds = result.messageIds;
+      newHistoryId = result.historyId;
+    } else {
+      // Try partial sync with history API
+      try {
+        console.log("Attempting partial sync with historyId:", lastHistoryId);
+        const result = await partialSync(gmail, lastHistoryId);
+        syncType = "partial";
 
-      const parsed = parseOrderEmail(detail.data as GmailMessage);
-      parsedEmails.push(parsed);
+        // Don't need to filter newly added messages on partial sync
+        messageIds = result.messageIds;
+        newHistoryId = result.historyId;
+      } catch (err) {
+        // Check if history expired (404 error)
+        const isHistoryExpired =
+          err instanceof Error &&
+          (err.message.includes("404") ||
+            err.message.includes("notFound") ||
+            (err as { code?: number }).code === 404);
+
+        if (isHistoryExpired && lastSyncAt) {
+          // Fall back to date-filtered sync
+          console.log("History expired, falling back to date-filtered sync");
+          syncType = "date-filtered";
+          const result = await dateFilteredSync(gmail, lastSyncAt, maxResults);
+          messageIds = result.messageIds;
+          newHistoryId = result.historyId;
+        } else if (isHistoryExpired) {
+          // No lastSyncAt, do full sync
+          console.log("History expired and no lastSyncAt, doing full sync");
+          syncType = "full";
+          const result = await fullSync(gmail, maxResults);
+          messageIds = result.messageIds;
+          newHistoryId = result.historyId;
+        } else {
+          throw err;
+        }
+      }
     }
 
-    // Submit emails to Trackable API for ingestion
-    const ingestionResults = await Promise.allSettled(
-      parsedEmails.map((email) =>
-        ingestEmail(
-          {
-            email_content: email.rawBody,
-            email_subject: email.subject,
-            email_from: email.from,
-          },
-          user.id,
-        ),
-      ),
-    );
+    // Fetch and process the messages
+    const emails = await fetchAndProcessMessages(gmail, messageIds, user.id);
 
-    // Map ingestion results to emails
-    const emailsWithIngestion = parsedEmails.map((email, index) => {
-      const result = ingestionResults[index];
-      let ingestion: EmailIngestionResult | undefined;
-
-      if (result.status === "fulfilled") {
-        ingestion = result.value;
-      } else {
-        ingestion = { success: false, error: result.reason?.message };
-      }
-
-      return {
-        id: email.messageId,
-        subject: email.subject,
-        from: email.from,
-        date: email.date,
-        snippet: email.snippet,
-        rawBody: email.rawBody,
-        ingestion,
-      };
-    });
-
-    // Update last synced time
+    // Update sync state in database
+    const now = new Date().toISOString();
     await supabase
       .from("user_gmail_tokens")
-      .update({ updated_at: new Date().toISOString() })
+      .update({
+        last_history_id: newHistoryId,
+        last_sync_at: now,
+        updated_at: now,
+      })
       .eq("user_id", user.id);
 
-    return NextResponse.json({
+    const result: GmailSyncResult = {
       success: true,
-      count: emailsWithIngestion.length,
-      emails: emailsWithIngestion,
-    });
+      syncType,
+      totalProcessed: emails.length,
+      newHistoryId,
+      emails,
+    };
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Gmail sync error:", error);
     const message =
@@ -206,14 +390,15 @@ export async function GET() {
 
     const { data: tokens } = await supabase
       .from("user_gmail_tokens")
-      .select("updated_at")
+      .select("updated_at, last_history_id, last_sync_at")
       .eq("user_id", user.id)
       .single();
 
     return NextResponse.json({
       connected: !!tokens,
       email: user.email,
-      lastSynced: tokens?.updated_at,
+      lastSynced: tokens?.last_sync_at || tokens?.updated_at,
+      hasHistoryId: !!tokens?.last_history_id,
     });
   } catch (error) {
     console.error("Gmail status error:", error);
