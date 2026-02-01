@@ -10,6 +10,8 @@ src/
 │   │   ├── agent/chat/     # AI agent chat endpoint
 │   │   ├── auth/callback/  # OAuth callback handler
 │   │   ├── gmail/sync/     # Gmail synchronization
+│   │   ├── gmail/watch/    # Gmail watch registration
+│   │   └── gmail/webhook/  # Gmail push notifications
 │   │   └── orders/         # Order-related endpoints
 │   └── app/                # Protected app pages
 │       ├── chat/           # AI chat interface
@@ -21,18 +23,23 @@ src/
 │   ├── layout/             # Header, sidebar, mobile-nav
 │   ├── chat/               # Chat UI components
 │   ├── agent/              # AI agent components
+│   ├── dashboard/          # App dashboard UI
 │   ├── orders/             # Order-specific components
 │   └── common/             # Shared utilities
 ├── lib/
 │   ├── supabase/           # Database client & middleware
 │   ├── gmail/              # Gmail API integration
 │   ├── gemini/             # Google Gemini AI prompts
-│   └── tracking/           # Shipment tracking
+│   ├── trackable-agent/    # Trackable-agent integration helpers
+│   ├── tracking/           # Shipment tracking
+│   └── utils.ts            # Shared utilities
+├── proxy.ts                # Local proxy helpers
 ├── types/                  # TypeScript type definitions
 └── data/                   # Mock data for development
 ```
 
 **Key conventions:**
+
 - Path alias `@/` → `src/`
 - Shadcn UI components (New York style)
 - Supabase for auth & database
@@ -42,7 +49,7 @@ src/
 
 # API Backend
 
-API backend is deployed on Google Cloud Run at api.usetrackable.ai, a local copy of the code can be found at `~/code/trackable-agent`.
+API backend is deployed on Google Cloud Run at api.usetrackable.ai, the code can be found under `./ingress-api` (symbolic link to a local clone of the trackable-agent repo).
 
 - `docs/openapi.yaml` is the OpenAPI specification for the API backend.
 
@@ -62,15 +69,4 @@ The backend exposes an OpenAI-compatible endpoint at `/api/v1/chat/completions` 
 
 # Important Notes
 
-Avoid using heredoc syntax (`<<'EOF'`) for commit messages - the sandbox blocks temp file creation outside `/tmp/claude/`. Use simple quoted strings instead:
-
-```bash
-# Don't do this
-git commit -m "$(cat <<'EOF'
-message
-EOF
-)"
-
-# Do this
-git commit -m "message"
-```
+You must avoid using heredoc syntax (`<<'EOF'`) when sandbox mode is enabled, as it blocks temp file creation outside `/tmp/claude/`. Use simple quoted strings instead.
