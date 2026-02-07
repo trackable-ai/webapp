@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sparkles, User } from "lucide-react";
 import type { MessageRole, MessageAction } from "@/types";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatMessageProps {
   role: MessageRole;
@@ -62,7 +64,24 @@ export function ChatMessage({
               : "bg-primary text-primary-foreground rounded-tr-sm"
           )}
         >
-          <p className="text-sm whitespace-pre-wrap">{content}</p>
+          {isAgent ? (
+            <div className="prose prose-sm max-w-none text-sm [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  a: ({ children, ...props }) => (
+                    <a {...props} target="_blank" rel="noopener noreferrer" className="text-[#3B82F6] underline">
+                      {children}
+                    </a>
+                  ),
+                }}
+              >
+                {content}
+              </ReactMarkdown>
+            </div>
+          ) : (
+            <p className="text-sm whitespace-pre-wrap">{content}</p>
+          )}
         </div>
 
         {actions && actions.length > 0 && (
