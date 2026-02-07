@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import { getSiteUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,7 +24,7 @@ function LoginContent() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback`,
+        redirectTo: `${getSiteUrl()}/api/auth/callback`,
         scopes:
           "openid email profile https://www.googleapis.com/auth/gmail.readonly",
         queryParams: {

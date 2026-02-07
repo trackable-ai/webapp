@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { getSiteUrl } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import {
   Mail,
@@ -48,7 +49,7 @@ export default function SettingsPage() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback?next=/app/settings`,
+        redirectTo: `${getSiteUrl()}/api/auth/callback?next=/app/settings`,
         scopes:
           "openid email profile https://www.googleapis.com/auth/gmail.readonly",
         queryParams: {
