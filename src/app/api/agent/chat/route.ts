@@ -111,6 +111,45 @@ export async function POST(request: Request) {
       });
     }
 
+    const contentType = response.headers.get("content-type") || "";
+
+    // Handle non-streaming JSON response
+    if (contentType.includes("application/json")) {
+      const json = await response.json();
+      const content =
+        json.choices?.[0]?.message?.content || "";
+      const suggestions = json.suggestions;
+      console.log("Non-streaming suggestions received:", JSON.stringify(suggestions));
+
+      // Build a Vercel AI SDK data stream from the non-streaming response
+      const textId = "text-0";
+      const parts = [
+        JSON.stringify({ type: "start" }),
+        JSON.stringify({ type: "start-step" }),
+        JSON.stringify({ type: "text-start", id: textId }),
+        JSON.stringify({ type: "text-delta", id: textId, delta: content }),
+        JSON.stringify({ type: "text-end", id: textId }),
+      ];
+      if (suggestions && suggestions.length > 0) {
+        parts.push(
+          JSON.stringify({ type: "data-suggestions", data: suggestions }),
+        );
+      }
+      parts.push(
+        JSON.stringify({ type: "finish-step" }),
+        JSON.stringify({ type: "finish", finishReason: "stop" }),
+      );
+
+      const body = parts.map((p) => `data: ${p}\n\n`).join("");
+      return new Response(body, {
+        headers: {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          Connection: "keep-alive",
+        },
+      });
+    }
+
     // Transform OpenAI SSE stream to Vercel AI SDK Data Stream format
     const transformStream = createSSETransformStream();
     const transformedStream = response.body.pipeThrough(transformStream);

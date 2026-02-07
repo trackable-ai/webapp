@@ -28,9 +28,13 @@ interface OpenAIChunk {
   created: number;
   model: string;
   choices: OpenAIChunkChoice[];
+  suggestions?: { label: string; prompt: string }[] | null;
 }
 
-export function createSSETransformStream(): TransformStream<Uint8Array, Uint8Array> {
+export function createSSETransformStream(): TransformStream<
+  Uint8Array,
+  Uint8Array
+> {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
   let buffer = "";
@@ -46,6 +50,8 @@ export function createSSETransformStream(): TransformStream<Uint8Array, Uint8Arr
       buffer = messages.pop() || ""; // Keep incomplete message in buffer
 
       for (const message of messages) {
+        console.log("SSE message:", message);
+
         if (!message.trim()) continue;
 
         // Parse SSE data line
@@ -57,9 +63,21 @@ export function createSSETransformStream(): TransformStream<Uint8Array, Uint8Arr
         // Handle [DONE] signal
         if (data === "[DONE]") {
           if (started) {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`));
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish-step" })}\n\n`));
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish", finishReason: "stop" })}\n\n`));
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`,
+              ),
+            );
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({ type: "finish-step" })}\n\n`,
+              ),
+            );
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({ type: "finish", finishReason: "stop" })}\n\n`,
+              ),
+            );
           }
           continue;
         }
@@ -72,6 +90,19 @@ export function createSSETransformStream(): TransformStream<Uint8Array, Uint8Arr
           continue;
         }
 
+        // Emit suggestions data part if present on this chunk
+        if (openaiChunk.suggestions && openaiChunk.suggestions.length > 0) {
+          console.log(
+            "SSE suggestions received:",
+            JSON.stringify(openaiChunk.suggestions),
+          );
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "data-suggestions", data: openaiChunk.suggestions })}\n\n`,
+            ),
+          );
+        }
+
         const choice = openaiChunk.choices?.[0];
         if (!choice) continue;
 
@@ -81,24 +112,46 @@ export function createSSETransformStream(): TransformStream<Uint8Array, Uint8Arr
         // Emit start sequence on first content
         if (!started && (delta.role || delta.content)) {
           started = true;
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "start" })}\n\n`));
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "start-step" })}\n\n`));
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-start", id: textId })}\n\n`));
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: "start" })}\n\n`),
+          );
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "start-step" })}\n\n`,
+            ),
+          );
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "text-start", id: textId })}\n\n`,
+            ),
+          );
         }
 
         // Emit text delta
         if (delta.content) {
           controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "text-delta", id: textId, delta: delta.content })}\n\n`)
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "text-delta", id: textId, delta: delta.content })}\n\n`,
+            ),
           );
         }
 
         // Handle finish reason (alternative to [DONE])
         if (finishReason && started) {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`));
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish-step" })}\n\n`));
           controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: "finish", finishReason: finishReason })}\n\n`)
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`,
+            ),
+          );
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "finish-step" })}\n\n`,
+            ),
+          );
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: "finish", finishReason: finishReason })}\n\n`,
+            ),
           );
           started = false; // Prevent duplicate finish on [DONE]
         }
@@ -108,9 +161,21 @@ export function createSSETransformStream(): TransformStream<Uint8Array, Uint8Arr
     flush(controller) {
       // Ensure we close properly if stream ends unexpectedly
       if (started) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`));
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish-step" })}\n\n`));
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "finish", finishReason: "stop" })}\n\n`));
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({ type: "text-end", id: textId })}\n\n`,
+          ),
+        );
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({ type: "finish-step" })}\n\n`,
+          ),
+        );
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({ type: "finish", finishReason: "stop" })}\n\n`,
+          ),
+        );
       }
     },
   });

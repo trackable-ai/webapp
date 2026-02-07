@@ -2,10 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { Suggestion } from "@/types";
 
 interface ChatSuggestionsProps {
-  suggestions: string[];
-  onSelect: (suggestion: string) => void;
+  suggestions: Suggestion[];
+  onSelect: (prompt: string) => void;
   className?: string;
 }
 
@@ -21,10 +22,10 @@ export function ChatSuggestions({
           key={index}
           variant="outline"
           size="sm"
-          onClick={() => onSelect(suggestion)}
+          onClick={() => onSelect(suggestion.prompt)}
           className="h-8 text-xs"
         >
-          {suggestion}
+          {suggestion.label}
         </Button>
       ))}
     </div>

@@ -39,6 +39,11 @@ export interface AgentRecommendation {
   createdAt: string;
 }
 
+export interface Suggestion {
+  label: string;
+  prompt: string;
+}
+
 export type MessageRole = "user" | "agent" | "system";
 
 export interface MessageAction {

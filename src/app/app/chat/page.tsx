@@ -7,8 +7,15 @@ import { useEffect, useRef, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { ChatMessage, ChatInput, ChatSuggestions } from "@/components/chat";
 import { Sparkles, AlertCircle } from "lucide-react";
+import type { Suggestion } from "@/types";
 
-function getMessageContent(message: UIMessage): string {
+type ChatDataTypes = {
+  suggestions: Suggestion[];
+};
+
+type AppUIMessage = UIMessage<unknown, ChatDataTypes>;
+
+function getMessageContent(message: AppUIMessage): string {
   if (!message.parts || message.parts.length === 0) {
     return "";
   }
@@ -20,11 +27,24 @@ function getMessageContent(message: UIMessage): string {
     .join("");
 }
 
-const suggestions = [
-  "Where's my MacBook?",
-  "Can I return the Nike shoes?",
-  "Show my return deadlines",
-  "What orders do I have?",
+function getMessageSuggestions(message: AppUIMessage): Suggestion[] {
+  if (!message.parts) return [];
+  for (const part of message.parts) {
+    if (part.type === "data-suggestions") {
+      return part.data;
+    }
+  }
+  return [];
+}
+
+const defaultSuggestions: Suggestion[] = [
+  { label: "Where's my MacBook?", prompt: "Where's my MacBook?" },
+  {
+    label: "Can I return the Nike shoes?",
+    prompt: "Can I return the Nike shoes?",
+  },
+  { label: "Show my return deadlines", prompt: "Show my return deadlines" },
+  { label: "What orders do I have?", prompt: "What orders do I have?" },
 ];
 
 export default function ChatPage() {
@@ -45,7 +65,7 @@ export default function ChatPage() {
     [],
   );
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status, error } = useChat<AppUIMessage>({
     transport,
     messages: [
       {
@@ -65,7 +85,7 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
           },
         ],
       },
-    ] as UIMessage[],
+    ] as AppUIMessage[],
   });
 
   const isLoading = status === "streaming" || status === "submitted";
@@ -75,6 +95,23 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Extract suggestions from the latest assistant message
+  const lastAssistantMessage = [...messages]
+    .reverse()
+    .find((m) => m.role === "assistant");
+  const apiSuggestions = lastAssistantMessage
+    ? getMessageSuggestions(lastAssistantMessage)
+    : [];
+
+  // Show API suggestions if available, otherwise show defaults before any user messages
+  const hasUserMessages = messages.some((m) => m.role === "user");
+  const suggestions =
+    apiSuggestions.length > 0
+      ? apiSuggestions
+      : !hasUserMessages
+        ? defaultSuggestions
+        : [];
 
   const handleSend = (content: string) => {
     if (content.trim()) {
@@ -143,9 +180,13 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
       </div>
 
       {/* Suggestions */}
-      {messages.length <= 2 && (
+      {suggestions.length > 0 && !isLoading && (
         <div className="border-t border-[#E8E8E8] py-4">
-          <p className="mb-2 text-xs font-normal text-[#7A7A7A]">Try asking:</p>
+          {!hasUserMessages && (
+            <p className="mb-2 text-xs font-normal text-[#7A7A7A]">
+              Try asking:
+            </p>
+          )}
           <ChatSuggestions suggestions={suggestions} onSelect={handleSend} />
         </div>
       )}
