@@ -13,7 +13,6 @@
 #    - _NEXT_PUBLIC_SUPABASE_ANON_KEY: Your Supabase anon/public key
 #
 # Runtime Environment Variables (set in Cloud Run service, not here):
-#    - GOOGLE_GENERATIVE_AI_API_KEY: Gemini API key
 #    - GOOGLE_CLIENT_ID: OAuth client ID
 #    - GOOGLE_CLIENT_SECRET: OAuth client secret
 #    - TRACKABLE_API_URL: Backend API URL (https://api.usetrackable.ai)

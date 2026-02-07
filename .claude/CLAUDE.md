@@ -29,7 +29,6 @@ src/
 ├── lib/
 │   ├── supabase/           # Database client & middleware
 │   ├── gmail/              # Gmail API integration
-│   ├── gemini/             # Google Gemini AI prompts
 │   ├── trackable-agent/    # Trackable-agent integration helpers
 │   ├── tracking/           # Shipment tracking
 │   └── utils.ts            # Shared utilities
@@ -43,7 +42,7 @@ src/
 - Path alias `@/` → `src/`
 - Shadcn UI components (New York style)
 - Supabase for auth & database
-- Google Gemini + Vercel AI SDK for AI features
+- Vercel AI SDK for chat UI streaming (all LLM calls happen in the backend)
 - Zustand for client state management
 - API routes must include Supabase user auth check (except public endpoints like health checks)
 
