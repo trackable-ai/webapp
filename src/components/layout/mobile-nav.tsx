@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Logo } from "@/components/common";
 
 const navigation = [
@@ -129,11 +130,15 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
 
           {/* User Info */}
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#3B82F6]">
-              <span className="text-xs font-medium text-white">
+            <Avatar className="h-9 w-9">
+              <AvatarImage
+                src={user?.user_metadata?.avatar_url || user?.user_metadata?.picture}
+                alt={getDisplayName(user)}
+              />
+              <AvatarFallback className="bg-[#3B82F6] text-xs font-medium text-white">
                 {getInitials(user?.email)}
-              </span>
-            </div>
+              </AvatarFallback>
+            </Avatar>
             <div className="flex flex-col gap-0.5">
               <span className="font-heading text-[13px] font-medium text-[#0D0D0D]">
                 {getDisplayName(user)}

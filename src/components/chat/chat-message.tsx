@@ -11,6 +11,7 @@ interface ChatMessageProps {
   content: string;
   actions?: MessageAction[];
   onActionClick?: (action: MessageAction) => void;
+  userAvatarUrl?: string | null;
   className?: string;
 }
 
@@ -19,6 +20,7 @@ export function ChatMessage({
   content,
   actions,
   onActionClick,
+  userAvatarUrl,
   className,
 }: ChatMessageProps) {
   const isAgent = role === "agent";
@@ -38,7 +40,7 @@ export function ChatMessage({
           </AvatarFallback>
         ) : (
           <>
-            <AvatarImage src="/avatars/user.jpg" />
+            <AvatarImage src={userAvatarUrl || undefined} />
             <AvatarFallback className="bg-muted">
               <User className="h-4 w-4 text-muted-foreground" />
             </AvatarFallback>

@@ -3,7 +3,8 @@
 import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { ChatMessage, ChatInput, ChatSuggestions } from "@/components/chat";
 import { Sparkles, AlertCircle } from "lucide-react";
 
@@ -28,6 +29,16 @@ const suggestions = [
 
 export default function ChatPage() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUserAvatarUrl(
+        user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null,
+      );
+    });
+  }, []);
 
   const transport = useMemo(
     () => new DefaultChatTransport({ api: "/api/agent/chat" }),
@@ -109,6 +120,7 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
                 key={message.id}
                 role={message.role === "user" ? "user" : "agent"}
                 content={content}
+                userAvatarUrl={userAvatarUrl}
               />
             );
           })}
