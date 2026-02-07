@@ -4,6 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useRef, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ChatMessage, ChatInput, ChatSuggestions } from "@/components/chat";
 import { Sparkles, AlertCircle } from "lucide-react";
@@ -49,6 +50,8 @@ const defaultSuggestions: Suggestion[] = [
 
 export default function ChatPage() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+  const initialQuerySent = useRef(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -95,6 +98,14 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q && !initialQuerySent.current) {
+      initialQuerySent.current = true;
+      sendMessage({ text: q });
+    }
+  }, [searchParams, sendMessage]);
 
   // Extract suggestions from the latest assistant message
   const lastAssistantMessage = [...messages]

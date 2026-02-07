@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { TrackingTimeline, ReturnPolicyCard } from "@/components/orders";
-import { getOrderById, mockRecommendations } from "@/data";
+import { useOrder } from "@/hooks/use-orders";
 import { format } from "date-fns";
 import {
   ArrowLeft,
@@ -13,8 +13,8 @@ import {
   ExternalLink,
   Copy,
   MessageSquare,
-  Sparkles,
   CheckCircle,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Order } from "@/types";
@@ -57,15 +57,37 @@ const tabs = [
 
 export default function OrderDetailPage({ params }: OrderDetailPageProps) {
   const { id } = use(params);
-  const order = getOrderById(id);
+  const { order, loading, error } = useOrder(id);
   const [activeTab, setActiveTab] = useState("tracking");
   const [copied, setCopied] = useState(false);
 
-  if (!order) {
-    notFound();
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32">
+        <Loader2 className="h-6 w-6 animate-spin text-[#3B82F6]" />
+        <p className="mt-3 text-sm font-normal text-[#7A7A7A]">
+          Loading order...
+        </p>
+      </div>
+    );
   }
 
-  const recommendation = mockRecommendations.find((r) => r.orderId === order.id);
+  if (error || !order) {
+    if (error?.includes("404")) notFound();
+    return (
+      <div className="flex flex-col items-center justify-center py-32">
+        <p className="text-sm font-normal text-[#EF4444]">
+          {error ?? "Order not found"}
+        </p>
+        <Link
+          href="/app/orders"
+          className="mt-2 text-sm font-medium text-[#3B82F6] hover:underline"
+        >
+          Back to orders
+        </Link>
+      </div>
+    );
+  }
 
   const handleCopyTracking = async () => {
     if (order.shipment) {
@@ -98,37 +120,6 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
       <div className="flex gap-6">
         {/* Main content */}
         <div className="flex flex-1 flex-col gap-6">
-          {/* Agent Insight */}
-          {recommendation && (
-            <div className="rounded-lg border border-[#8B5CF6]/20 bg-[#F5F3FF] p-6">
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#8B5CF6]/10">
-                  <Sparkles className="h-5 w-5 text-[#8B5CF6]" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-heading text-sm font-medium text-[#0D0D0D]">
-                    Agent Insight
-                  </p>
-                  <p className="mt-1 text-sm font-normal text-[#7A7A7A]">
-                    {recommendation.description}
-                  </p>
-                  {recommendation.primaryAction && (
-                    <div className="mt-3 flex gap-2">
-                      <button className="rounded bg-[#8B5CF6] px-4 py-2 text-[13px] font-medium text-white transition-colors hover:bg-[#7C3AED]">
-                        {recommendation.primaryAction.label}
-                      </button>
-                      {recommendation.secondaryAction && (
-                        <button className="rounded border border-[#E8E8E8] bg-white px-4 py-2 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]">
-                          {recommendation.secondaryAction.label}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Order items */}
           <div className="rounded-lg border border-[#E8E8E8] bg-white p-6">
             <h2 className="font-heading text-base font-semibold text-[#0D0D0D]">
@@ -412,15 +403,17 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
             <div className="my-4 h-px bg-[#E8E8E8]" />
 
-            <a
-              href={order.merchant.supportUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded border border-[#E8E8E8] bg-white py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]"
-            >
-              <MessageSquare className="h-4 w-4 text-[#7A7A7A]" />
-              Contact Support
-            </a>
+            {order.merchant.supportUrl && (
+              <a
+                href={order.merchant.supportUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded border border-[#E8E8E8] bg-white py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]"
+              >
+                <MessageSquare className="h-4 w-4 text-[#7A7A7A]" />
+                Contact Support
+              </a>
+            )}
           </div>
 
           {/* Quick Actions */}
@@ -446,10 +439,13 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                   Start Return
                 </button>
               )}
-              <button className="flex w-full items-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]">
+              <Link
+                href={`/app/chat?q=${encodeURIComponent(`Tell me about my order #${order.orderNumber} from ${order.merchant.name}`)}`}
+                className="flex w-full items-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]"
+              >
                 <MessageSquare className="h-4 w-4 text-[#7A7A7A]" />
                 Ask Trackable
-              </button>
+              </Link>
             </div>
           </div>
         </div>

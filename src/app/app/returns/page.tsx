@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { mockOrders } from "@/data";
+import { useOrders } from "@/hooks/use-orders";
 import { format } from "date-fns";
 import { RotateCcw, Package, AlertCircle, ArrowRight } from "lucide-react";
 
 export default function ReturnsPage() {
-  const returnEligibleOrders = mockOrders.filter(
+  const { orders } = useOrders();
+  const returnEligibleOrders = orders.filter(
     (o) => o.status === "delivered" && o.returnPolicy?.isEligible
   );
 

@@ -1,7 +1,57 @@
 import { createClient } from "@/lib/supabase/server";
-import { getTrackableApiUrl } from "@/lib/trackable-agent/client";
-import { NextResponse } from "next/server";
+import { fetchOrders, getTrackableApiUrl } from "@/lib/trackable-agent/client";
+import { mapApiOrderToOrder } from "@/lib/trackable-agent/order-mapper";
+import { NextRequest, NextResponse } from "next/server";
 import type { CreateOrderRequest } from "@/lib/trackable-agent/types";
+
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = request.nextUrl;
+    const status = searchParams.get("status") ?? undefined;
+    const limit = searchParams.get("limit")
+      ? Number(searchParams.get("limit"))
+      : undefined;
+    const offset = searchParams.get("offset")
+      ? Number(searchParams.get("offset"))
+      : undefined;
+
+    const data = await fetchOrders(user.id, { status, limit, offset });
+    const orders = data.orders.map(mapApiOrderToOrder);
+
+    return NextResponse.json({
+      orders,
+      total: data.total,
+      limit: data.limit,
+      offset: data.offset,
+    });
+  } catch (error) {
+    console.error("Orders GET error:", error);
+
+    if (
+      error instanceof Error &&
+      error.message.includes("TRACKABLE_API_URL")
+    ) {
+      return NextResponse.json(
+        { error: "API not configured" },
+        { status: 503 },
+      );
+    }
+
+    return NextResponse.json(
+      { error: "Failed to fetch orders" },
+      { status: 500 },
+    );
+  }
+}
 
 export async function POST(request: Request) {
   try {

@@ -50,7 +50,7 @@ src/
 
 API backend is deployed on Google Cloud Run at api.usetrackable.ai, the code can be found under `./ingress-api` (symbolic link to a local clone of the trackable-agent repo).
 
-- `docs/openapi.yaml` is the OpenAPI specification for the API backend.
+- The OpenAPI specification is available at https://api.usetrackable.ai/openapi.json
 
 ## Chat API Proxy
 

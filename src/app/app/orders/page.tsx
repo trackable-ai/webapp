@@ -3,10 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { mockOrders } from "@/data";
+import { useOrders } from "@/hooks/use-orders";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Search, Filter, Package, ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Search, Filter, Package, ChevronLeft, ChevronRight, Plus, Loader2 } from "lucide-react";
 import type { Order } from "@/types";
 import { AddOrderModal } from "@/components/orders";
 
@@ -34,8 +34,8 @@ function StatusBadge({ status }: { status: Order["status"] }) {
   const config = statusConfig[status] || statusConfig.pending;
 
   return (
-    <div className={cn("rounded-full px-2.5 py-1", config.bg)}>
-      <span className={cn("text-xs font-medium", config.text)}>
+    <div className={cn("inline-flex items-center justify-center rounded-full px-2.5 py-1", config.bg)}>
+      <span className={cn("text-xs font-medium leading-none", config.text)}>
         {config.label}
       </span>
     </div>
@@ -43,6 +43,7 @@ function StatusBadge({ status }: { status: Order["status"] }) {
 }
 
 export default function OrdersPage() {
+  const { orders, loading, error, refetch } = useOrders();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,7 +51,7 @@ export default function OrdersPage() {
   const itemsPerPage = 5;
 
   const filterOrders = () => {
-    let filtered = mockOrders;
+    let filtered = orders;
 
     if (activeTab === "active") {
       filtered = filtered.filter(
@@ -133,7 +134,10 @@ export default function OrdersPage() {
       {/* Add Order Modal */}
       <AddOrderModal
         open={addOrderOpen}
-        onOpenChange={setAddOrderOpen}
+        onOpenChange={(open) => {
+          setAddOrderOpen(open);
+          if (!open) refetch();
+        }}
       />
 
       {/* Tabs */}
@@ -161,7 +165,26 @@ export default function OrdersPage() {
 
       {/* Orders List */}
       <div className="overflow-hidden rounded-lg border border-[#E8E8E8] bg-white">
-        {paginatedOrders.length > 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-16">
+            <Loader2 className="h-6 w-6 animate-spin text-[#3B82F6]" />
+            <p className="mt-3 text-sm font-normal text-[#7A7A7A]">
+              Loading orders...
+            </p>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-16">
+            <p className="text-sm font-normal text-[#EF4444]">
+              Failed to load orders
+            </p>
+            <button
+              onClick={refetch}
+              className="mt-2 text-sm font-medium text-[#3B82F6] hover:underline"
+            >
+              Try again
+            </button>
+          </div>
+        ) : paginatedOrders.length > 0 ? (
           <div className="divide-y divide-[#E8E8E8]">
             {paginatedOrders.map((order) => (
               <OrderRow key={order.id} order={order} />
@@ -224,68 +247,63 @@ function OrderRow({ order }: { order: Order }) {
   return (
     <Link
       href={`/app/orders/${order.id}`}
-      className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-[#FAFAFA]"
+      className="grid grid-cols-[auto_1fr_minmax(120px,auto)_120px_100px] items-center gap-4 px-5 py-4 transition-colors hover:bg-[#FAFAFA]"
     >
-      {/* Left side */}
-      <div className="flex items-center gap-4">
-        {/* Product image */}
-        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded bg-[#FAFAFA]">
-          {firstItem.imageUrl ? (
-            <Image
-              src={firstItem.imageUrl}
-              alt={firstItem.name}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <Package className="h-5 w-5 text-[#B0B0B0]" />
-            </div>
-          )}
-        </div>
-
-        {/* Order info */}
-        <div className="flex flex-col gap-1">
-          <span className="font-heading text-sm font-medium text-[#0D0D0D]">
-            {order.merchant.name}
-          </span>
-          <span className="text-xs font-normal text-[#7A7A7A]">
-            {firstItem.name}
-            {order.items.length > 1 && ` +${order.items.length - 1} more`}
-          </span>
-        </div>
+      {/* Product image */}
+      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded bg-[#FAFAFA]">
+        {firstItem?.imageUrl ? (
+          <Image
+            src={firstItem.imageUrl}
+            alt={firstItem.name}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <Package className="h-5 w-5 text-[#B0B0B0]" />
+          </div>
+        )}
       </div>
 
-      {/* Middle - Order number */}
-      <div className="hidden md:block">
-        <span className="text-sm font-normal text-[#7A7A7A]">
-          #{order.orderNumber}
+      {/* Order info */}
+      <div className="flex min-w-0 flex-col gap-1">
+        <span className="truncate font-heading text-sm font-medium text-[#0D0D0D]">
+          {order.merchant.name || firstItem?.name || "Order"}
+        </span>
+        <span className="truncate text-xs font-normal text-[#7A7A7A]">
+          {order.merchant.name
+            ? `${firstItem?.name ?? "Order"}${order.items.length > 1 ? ` +${order.items.length - 1} more` : ""}`
+            : order.items.length > 1
+              ? `${order.items.length} items`
+              : ""}
         </span>
       </div>
 
-      {/* Right side */}
-      <div className="flex items-center gap-8">
-        {/* Status */}
-        <div className="w-28">
-          {showReturnEligible ? (
-            <div className="inline-flex rounded-full bg-[#F5F3FF] px-2.5 py-1">
-              <span className="text-xs font-medium text-[#8B5CF6]">
-                Return Eligible
-              </span>
-            </div>
-          ) : (
-            <StatusBadge status={order.status} />
-          )}
-        </div>
+      {/* Order number */}
+      <span className="hidden truncate text-sm font-normal text-[#7A7A7A] md:block">
+        #{order.orderNumber}
+      </span>
 
-        {/* Date */}
-        <span className="w-24 text-right text-xs font-normal text-[#7A7A7A]">
-          {format(
-            new Date(order.deliveredAt || order.orderedAt),
-            "MMM d, yyyy"
-          )}
-        </span>
+      {/* Status */}
+      <div>
+        {showReturnEligible ? (
+          <div className="inline-flex rounded-full bg-[#F5F3FF] px-2.5 py-1">
+            <span className="text-xs font-medium text-[#8B5CF6]">
+              Return Eligible
+            </span>
+          </div>
+        ) : (
+          <StatusBadge status={order.status} />
+        )}
       </div>
+
+      {/* Date */}
+      <span className="text-right text-xs font-normal text-[#7A7A7A]">
+        {format(
+          new Date(order.deliveredAt || order.orderedAt),
+          "MMM d, yyyy"
+        )}
+      </span>
     </Link>
   );
 }

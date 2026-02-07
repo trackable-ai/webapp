@@ -9,7 +9,8 @@ import {
   RecommendationCard,
 } from "@/components/dashboard";
 import { OrderCard } from "@/components/orders";
-import { mockOrders, mockRecommendations } from "@/data";
+import { mockRecommendations } from "@/data";
+import { useOrders } from "@/hooks/use-orders";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import {
@@ -24,6 +25,7 @@ import {
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
+  const { orders } = useOrders();
   const supabase = createClient();
 
   useEffect(() => {
@@ -53,12 +55,12 @@ export default function DashboardPage() {
     );
   };
 
-  const activeOrders = mockOrders.filter(
+  const activeOrders = orders.filter(
     (o) =>
       o.status !== "delivered" && o.status !== "cancelled" && o.status !== "returned"
   );
-  const deliveredOrders = mockOrders.filter((o) => o.status === "delivered");
-  const returnEligibleOrders = mockOrders.filter(
+  const deliveredOrders = orders.filter((o) => o.status === "delivered");
+  const returnEligibleOrders = orders.filter(
     (o) => o.status === "delivered" && o.returnPolicy?.isEligible
   );
   const urgentRecommendations = mockRecommendations.filter(
@@ -179,7 +181,7 @@ export default function DashboardPage() {
               </Link>
             </div>
             <div className="flex flex-col gap-3">
-              {mockOrders.slice(0, 3).map((order) => (
+              {orders.slice(0, 3).map((order) => (
                 <OrderCard key={order.id} order={order} />
               ))}
             </div>
