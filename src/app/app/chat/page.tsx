@@ -3,7 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
-import { useEffect, useRef, useMemo, useState } from "react";
+import { Suspense, useEffect, useRef, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ChatMessage, ChatInput, ChatSuggestions } from "@/components/chat";
@@ -49,6 +49,14 @@ const defaultSuggestions: Suggestion[] = [
 ];
 
 export default function ChatPage() {
+  return (
+    <Suspense>
+      <ChatPageInner />
+    </Suspense>
+  );
+}
+
+function ChatPageInner() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const initialQuerySent = useRef(false);
