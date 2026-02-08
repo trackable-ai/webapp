@@ -26,8 +26,8 @@ function StatusBadge({ status }: { status: Order["status"] }) {
   const config = statusConfig[status] || statusConfig.pending;
 
   return (
-    <div className={cn("rounded-full px-2.5 py-1", config.bg)}>
-      <span className={cn("text-xs font-medium", config.text)}>
+    <div className={cn("inline-flex items-center justify-center rounded-full px-2.5 py-1", config.bg)}>
+      <span className={cn("text-xs font-medium leading-none", config.text)}>
         {config.label}
       </span>
     </div>
@@ -35,7 +35,7 @@ function StatusBadge({ status }: { status: Order["status"] }) {
 }
 
 export function OrderCard({ order, className }: OrderCardProps) {
-  const firstItem = order.items[0];
+  const firstItem = order.items?.[0];
   const showReturnEligible =
     order.status === "delivered" && order.returnPolicy?.isEligible;
 
@@ -51,7 +51,7 @@ export function OrderCard({ order, className }: OrderCardProps) {
         <div className="flex items-center gap-3">
           {/* Product image */}
           <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded bg-[#FAFAFA]">
-            {firstItem.imageUrl ? (
+            {firstItem?.imageUrl ? (
               <Image
                 src={firstItem.imageUrl}
                 alt={firstItem.name}
@@ -71,7 +71,7 @@ export function OrderCard({ order, className }: OrderCardProps) {
               {order.merchant.name}
             </span>
             <span className="text-xs font-normal text-[#7A7A7A]">
-              {firstItem.name}
+              {firstItem?.name ?? "Unknown item"}
               {order.items.length > 1 && ` +${order.items.length - 1} more`}
             </span>
           </div>
@@ -80,7 +80,7 @@ export function OrderCard({ order, className }: OrderCardProps) {
         {/* Right side */}
         <div className="flex flex-col items-end gap-1">
           {showReturnEligible ? (
-            <div className="rounded-full bg-[#F5F3FF] px-2.5 py-1">
+            <div className="inline-flex rounded-full bg-[#F5F3FF] px-2.5 py-1">
               <span className="text-xs font-medium text-[#8B5CF6]">
                 Return Eligible
               </span>
