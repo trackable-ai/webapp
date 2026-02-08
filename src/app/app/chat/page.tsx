@@ -3,9 +3,9 @@
 import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
-import { Suspense, useEffect, useRef, useMemo, useState } from "react";
+import { Suspense, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useUserAvatarUrl } from "@/stores/user-store";
 import { ChatMessage, ChatInput, ChatSuggestions } from "@/components/chat";
 import { Sparkles, AlertCircle } from "lucide-react";
 import { useOrders } from "@/hooks/use-orders";
@@ -61,16 +61,7 @@ function ChatPageInner() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const initialQuerySent = useRef(false);
-  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUserAvatarUrl(
-        user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null,
-      );
-    });
-  }, []);
+  const userAvatarUrl = useUserAvatarUrl();
 
   const { total: orderCount } = useOrders();
 

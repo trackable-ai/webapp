@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   MetricCard,
@@ -11,7 +10,7 @@ import {
 import { OrderCard } from "@/components/orders";
 import { mockRecommendations } from "@/data";
 import { useOrders } from "@/hooks/use-orders";
-import { createClient } from "@/lib/supabase/client";
+import { useUser } from "@/stores/user-store";
 import type { User } from "@supabase/supabase-js";
 import {
   TrendingUp,
@@ -24,19 +23,8 @@ import {
 } from "lucide-react";
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null);
+  const user = useUser();
   const { orders } = useOrders();
-  const supabase = createClient();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    getUser();
-  }, [supabase.auth]);
 
   const getGreeting = () => {
     const hour = new Date().getHours();

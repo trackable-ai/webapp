@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { withAuth } from "@/lib/supabase/auth";
 import { getGmailClient } from "@/lib/gmail/client";
 import { NextResponse } from "next/server";
 import type { GmailSyncResult } from "@/lib/gmail/types";
@@ -94,142 +95,130 @@ async function dateFilteredSync(
 }
 
 export async function POST(request: Request) {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  return withAuth(async (user) => {
+    try {
+      const body = await request.json().catch(() => ({}));
+      const maxResults = body.maxResults || 50;
+      const forceFullSync = body.forceFullSync || false;
 
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+      const gmail = await getGmailClient();
 
-    const body = await request.json().catch(() => ({}));
-    const maxResults = body.maxResults || 50;
-    const forceFullSync = body.forceFullSync || false;
+      // Get current sync state from database
+      const supabase = await createClient();
+      const { data: tokenData } = await supabase
+        .from("user_gmail_tokens")
+        .select("last_history_id, last_sync_at")
+        .eq("user_id", user.id)
+        .single();
 
-    const gmail = await getGmailClient();
+      const lastHistoryId = forceFullSync ? null : tokenData?.last_history_id;
+      const lastSyncAt = tokenData?.last_sync_at
+        ? new Date(tokenData.last_sync_at)
+        : null;
 
-    // Get current sync state from database
-    const { data: tokenData } = await supabase
-      .from("user_gmail_tokens")
-      .select("last_history_id, last_sync_at")
-      .eq("user_id", user.id)
-      .single();
+      let syncType: GmailSyncResult["syncType"];
+      let messageIds: string[];
+      let newHistoryId: string | null;
 
-    const lastHistoryId = forceFullSync ? null : tokenData?.last_history_id;
-    const lastSyncAt = tokenData?.last_sync_at
-      ? new Date(tokenData.last_sync_at)
-      : null;
-
-    let syncType: GmailSyncResult["syncType"];
-    let messageIds: string[];
-    let newHistoryId: string | null;
-
-    if (!lastHistoryId) {
-      // First sync or forced full sync
-      console.log("Performing full sync");
-      syncType = "full";
-      const result = await fullSync(gmail, maxResults);
-      messageIds = result.messageIds;
-      newHistoryId = result.historyId;
-    } else {
-      // Try partial sync with history API
-      try {
-        console.log("Attempting partial sync with historyId:", lastHistoryId);
-        const result = await partialSync(gmail, lastHistoryId);
-        syncType = "partial";
-
-        // Don't need to filter newly added messages on partial sync
+      if (!lastHistoryId) {
+        // First sync or forced full sync
+        console.log("Performing full sync");
+        syncType = "full";
+        const result = await fullSync(gmail, maxResults);
         messageIds = result.messageIds;
         newHistoryId = result.historyId;
-      } catch (err) {
-        // Check if history expired (404 error)
-        const isHistoryExpired =
-          err instanceof Error &&
-          (err.message.includes("404") ||
-            err.message.includes("notFound") ||
-            (err as { code?: number }).code === 404);
+      } else {
+        // Try partial sync with history API
+        try {
+          console.log("Attempting partial sync with historyId:", lastHistoryId);
+          const result = await partialSync(gmail, lastHistoryId);
+          syncType = "partial";
 
-        if (isHistoryExpired && lastSyncAt) {
-          // Fall back to date-filtered sync
-          console.log("History expired, falling back to date-filtered sync");
-          syncType = "date-filtered";
-          const result = await dateFilteredSync(gmail, lastSyncAt, maxResults);
+          // Don't need to filter newly added messages on partial sync
           messageIds = result.messageIds;
           newHistoryId = result.historyId;
-        } else if (isHistoryExpired) {
-          // No lastSyncAt, do full sync
-          console.log("History expired and no lastSyncAt, doing full sync");
-          syncType = "full";
-          const result = await fullSync(gmail, maxResults);
-          messageIds = result.messageIds;
-          newHistoryId = result.historyId;
-        } else {
-          throw err;
+        } catch (err) {
+          // Check if history expired (404 error)
+          const isHistoryExpired =
+            err instanceof Error &&
+            (err.message.includes("404") ||
+              err.message.includes("notFound") ||
+              (err as { code?: number }).code === 404);
+
+          if (isHistoryExpired && lastSyncAt) {
+            // Fall back to date-filtered sync
+            console.log("History expired, falling back to date-filtered sync");
+            syncType = "date-filtered";
+            const result = await dateFilteredSync(gmail, lastSyncAt, maxResults);
+            messageIds = result.messageIds;
+            newHistoryId = result.historyId;
+          } else if (isHistoryExpired) {
+            // No lastSyncAt, do full sync
+            console.log("History expired and no lastSyncAt, doing full sync");
+            syncType = "full";
+            const result = await fullSync(gmail, maxResults);
+            messageIds = result.messageIds;
+            newHistoryId = result.historyId;
+          } else {
+            throw err;
+          }
         }
       }
+
+      // Fetch and process the messages
+      const emails = await fetchAndProcessMessages(gmail, messageIds, user.id);
+
+      // Update sync state in database
+      const now = new Date().toISOString();
+      await supabase
+        .from("user_gmail_tokens")
+        .update({
+          last_history_id: newHistoryId,
+          last_sync_at: now,
+          updated_at: now,
+        })
+        .eq("user_id", user.id);
+
+      const result: GmailSyncResult = {
+        success: true,
+        syncType,
+        totalProcessed: emails.length,
+        newHistoryId,
+        emails,
+      };
+
+      return NextResponse.json(result);
+    } catch (error) {
+      console.error("Gmail sync error:", error);
+      const message =
+        error instanceof Error ? error.message : "Failed to sync emails";
+      return NextResponse.json({ error: message }, { status: 500 });
     }
-
-    // Fetch and process the messages
-    const emails = await fetchAndProcessMessages(gmail, messageIds, user.id);
-
-    // Update sync state in database
-    const now = new Date().toISOString();
-    await supabase
-      .from("user_gmail_tokens")
-      .update({
-        last_history_id: newHistoryId,
-        last_sync_at: now,
-        updated_at: now,
-      })
-      .eq("user_id", user.id);
-
-    const result: GmailSyncResult = {
-      success: true,
-      syncType,
-      totalProcessed: emails.length,
-      newHistoryId,
-      emails,
-    };
-
-    return NextResponse.json(result);
-  } catch (error) {
-    console.error("Gmail sync error:", error);
-    const message =
-      error instanceof Error ? error.message : "Failed to sync emails";
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+  });
 }
 
 export async function GET() {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  return withAuth(async (user) => {
+    try {
+      const supabase = await createClient();
+      const { data: tokens } = await supabase
+        .from("user_gmail_tokens")
+        .select("updated_at, last_history_id, last_sync_at")
+        .eq("user_id", user.id)
+        .single();
 
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({
+        connected: !!tokens,
+        email: user.email,
+        lastSynced: tokens?.last_sync_at || tokens?.updated_at,
+        hasHistoryId: !!tokens?.last_history_id,
+      });
+    } catch (error) {
+      console.error("Gmail status error:", error);
+      return NextResponse.json(
+        { error: "Failed to get status" },
+        { status: 500 },
+      );
     }
-
-    const { data: tokens } = await supabase
-      .from("user_gmail_tokens")
-      .select("updated_at, last_history_id, last_sync_at")
-      .eq("user_id", user.id)
-      .single();
-
-    return NextResponse.json({
-      connected: !!tokens,
-      email: user.email,
-      lastSynced: tokens?.last_sync_at || tokens?.updated_at,
-      hasHistoryId: !!tokens?.last_history_id,
-    });
-  } catch (error) {
-    console.error("Gmail status error:", error);
-    return NextResponse.json(
-      { error: "Failed to get status" },
-      { status: 500 },
-    );
-  }
+  });
 }

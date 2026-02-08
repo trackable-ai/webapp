@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Bell, Search, Menu, LogOut } from "lucide-react";
@@ -20,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { mockNotifications } from "@/data";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import { useUser } from "@/stores/user-store";
 import type { User } from "@supabase/supabase-js";
 
 interface HeaderProps {
@@ -27,30 +27,12 @@ interface HeaderProps {
 }
 
 export function Header({ onMenuClick }: HeaderProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const user = useUser();
   const router = useRouter();
-  const supabase = createClient();
   const unreadCount = mockNotifications.filter((n) => !n.read).length;
 
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    getUser();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
-
   const handleSignOut = async () => {
+    const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
   };

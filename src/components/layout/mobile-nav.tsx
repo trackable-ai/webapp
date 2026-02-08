@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
+import { useUser } from "@/stores/user-store";
 import type { User } from "@supabase/supabase-js";
 import {
   LayoutDashboard,
@@ -34,18 +33,7 @@ interface MobileNavProps {
 
 export function MobileNav({ open, onOpenChange }: MobileNavProps) {
   const pathname = usePathname();
-  const [user, setUser] = useState<User | null>(null);
-  const supabase = createClient();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    getUser();
-  }, [supabase.auth]);
+  const user = useUser();
 
   const getInitials = (email: string | undefined) => {
     if (!email) return "U";
