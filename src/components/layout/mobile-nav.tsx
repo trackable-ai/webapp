@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
@@ -68,7 +68,8 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="fixed inset-y-0 left-0 z-50 flex h-full w-full max-w-[280px] flex-col justify-between border-r border-[#E8E8E8] bg-white p-0 [&>button]:hidden">
+      <DialogContent className="fixed inset-y-0 left-0 top-0 z-50 flex h-full w-full max-w-[280px] translate-x-0 translate-y-0 flex-col justify-between rounded-none border-r border-[#E8E8E8] bg-white p-0 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 [&>button]:hidden">
+        <DialogTitle className="sr-only">Navigation menu</DialogTitle>
         {/* Top section */}
         <div className="flex flex-col gap-6 px-4 py-6">
           {/* Header with logo and close button */}

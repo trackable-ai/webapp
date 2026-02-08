@@ -39,8 +39,8 @@ const statusConfig: Record<
 function StatusBadge({ status }: { status: Order["status"] }) {
   const config = statusConfig[status] || statusConfig.pending;
   return (
-    <div className={cn("rounded-full px-2.5 py-1", config.bg)}>
-      <span className={cn("text-xs font-medium", config.text)}>{config.label}</span>
+    <div className={cn("inline-flex items-center justify-center rounded-full px-2.5 py-1", config.bg)}>
+      <span className={cn("text-xs font-medium leading-none", config.text)}>{config.label}</span>
     </div>
   );
 }

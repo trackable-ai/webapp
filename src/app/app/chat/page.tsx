@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ChatMessage, ChatInput, ChatSuggestions } from "@/components/chat";
 import { Sparkles, AlertCircle } from "lucide-react";
+import { useOrders } from "@/hooks/use-orders";
 import type { Suggestion } from "@/types";
 
 type ChatDataTypes = {
@@ -71,10 +72,27 @@ function ChatPageInner() {
     });
   }, []);
 
+  const { total: orderCount } = useOrders();
+
   const transport = useMemo(
     () => new DefaultChatTransport({ api: "/api/agent/chat" }),
     [],
   );
+
+  const welcomeText = useMemo(() => {
+    const trackingLine =
+      orderCount > 0
+        ? `I'm currently tracking **${orderCount}** order${orderCount !== 1 ? "s" : ""} for you. `
+        : "";
+    return `Hi there! I'm Trackable, your personal shopping assistant. I can help you with:
+
+- **Tracking orders** - Check delivery status and ETAs
+- **Managing returns** - Understand policies and deadlines
+- **Return deadlines** - Never miss a return window
+- **Support** - Help contacting merchants
+
+${trackingLine}What would you like to know?`;
+  }, [orderCount]);
 
   const { messages, sendMessage, status, error } = useChat<AppUIMessage>({
     transport,
@@ -85,14 +103,7 @@ function ChatPageInner() {
         parts: [
           {
             type: "text" as const,
-            text: `Hi there! I'm Trackable, your personal shopping assistant. I can help you with:
-
-•  Tracking orders - Check delivery status and ETAs
-•  Managing returns - Understand policies and deadlines
-•  Return deadlines - Never miss a return window
-•  Support - Help contacting merchants
-
-I'm currently tracking 5 orders for you. What would you like to know?`,
+            text: "",
           },
         ],
       },
@@ -169,7 +180,10 @@ I'm currently tracking 5 orders for you. What would you like to know?`,
       <div ref={scrollAreaRef} className="flex-1 overflow-y-auto py-6">
         <div className="space-y-6">
           {messages.map((message) => {
-            const content = getMessageContent(message);
+            const content =
+              message.id === "welcome"
+                ? welcomeText
+                : getMessageContent(message);
             if (!content) return null;
             return (
               <ChatMessage
