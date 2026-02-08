@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useOrders } from "@/hooks/use-orders";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Search, Filter, Package, ChevronLeft, ChevronRight, Plus, Loader2 } from "lucide-react";
+import { Search, Filter, Package, ChevronLeft, ChevronRight, Plus, Loader2, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import type { Order } from "@/types";
 import { AddOrderModal } from "@/components/orders";
+
+type SortField = "merchant" | "orderNumber" | "status" | "date";
+type SortDirection = "asc" | "desc";
 
 const tabs = [
   { id: "all", label: "All Orders" },
@@ -48,9 +51,21 @@ export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [addOrderOpen, setAddOrderOpen] = useState(false);
+  const [sortField, setSortField] = useState<SortField | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const itemsPerPage = 5;
 
-  const filterOrders = () => {
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+    setCurrentPage(1);
+  };
+
+  const filteredOrders = useMemo(() => {
     let filtered = orders;
 
     if (activeTab === "active") {
@@ -78,10 +93,32 @@ export default function OrdersPage() {
       );
     }
 
-    return filtered;
-  };
+    if (sortField) {
+      filtered = [...filtered].sort((a, b) => {
+        let cmp = 0;
+        switch (sortField) {
+          case "merchant":
+            cmp = (a.merchant.name || "").localeCompare(b.merchant.name || "");
+            break;
+          case "orderNumber":
+            cmp = a.orderNumber.localeCompare(b.orderNumber);
+            break;
+          case "status":
+            cmp = a.status.localeCompare(b.status);
+            break;
+          case "date": {
+            const dateA = new Date(a.deliveredAt || a.orderedAt).getTime();
+            const dateB = new Date(b.deliveredAt || b.orderedAt).getTime();
+            cmp = dateA - dateB;
+            break;
+          }
+        }
+        return sortDirection === "asc" ? cmp : -cmp;
+      });
+    }
 
-  const filteredOrders = filterOrders();
+    return filtered;
+  }, [orders, activeTab, searchQuery, sortField, sortDirection]);
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const paginatedOrders = filteredOrders.slice(
     (currentPage - 1) * itemsPerPage,
@@ -186,6 +223,13 @@ export default function OrdersPage() {
           </div>
         ) : paginatedOrders.length > 0 ? (
           <div className="divide-y divide-[#E8E8E8]">
+            <div className="grid grid-cols-[auto_1fr_minmax(120px,auto)_120px_100px] items-center gap-4 border-b border-[#E8E8E8] bg-[#FAFAFA] px-5 py-2.5">
+              <div className="h-14 w-14 shrink-0" />
+              <SortHeader field="merchant" label="Order" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+              <SortHeader field="orderNumber" label="Order #" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} className="hidden md:flex" />
+              <SortHeader field="status" label="Status" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+              <SortHeader field="date" label="Date" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} className="justify-end" />
+            </div>
             {paginatedOrders.map((order) => (
               <OrderRow key={order.id} order={order} />
             ))}
@@ -236,6 +280,43 @@ export default function OrdersPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function SortHeader({
+  field,
+  label,
+  sortField,
+  sortDirection,
+  onSort,
+  className,
+}: {
+  field: SortField;
+  label: string;
+  sortField: SortField | null;
+  sortDirection: SortDirection;
+  onSort: (field: SortField) => void;
+  className?: string;
+}) {
+  const active = sortField === field;
+  const Icon = active
+    ? sortDirection === "asc"
+      ? ArrowUp
+      : ArrowDown
+    : ArrowUpDown;
+
+  return (
+    <button
+      onClick={() => onSort(field)}
+      className={cn(
+        "flex items-center gap-1 text-xs font-medium text-[#7A7A7A] transition-colors hover:text-[#0D0D0D]",
+        active && "text-[#0D0D0D]",
+        className
+      )}
+    >
+      {label}
+      <Icon className="h-3 w-3" />
+    </button>
   );
 }
 
