@@ -1,114 +1,48 @@
-# Trackable: Personal Shopping Agent
+# Trackable
 
-**Your AI-first companion for post-purchase experiences.**
+**Your personal shopping agent.**
 
-Trackable eliminates the friction of managing online orders by acting as an intelligent agent that monitors your purchases, tracks deliveries, and proactively helps you with returns and exchanges—all starting from your inbox.
+We all hate the post-purchase mess. Receipts buried in Gmail, return windows closing while you're busy, and navigating five different carrier sites just to see where your package is.
 
-## 🚀 Overview
+Trackable fixes this. It's an AI agent that lives in your inbox, watches your orders, and tells you what you need to know *before* you ask.
 
-Post-purchase management is broken. We miss return windows, lose receipts in our inbox, and waste time decoding return policies.
+## What it does
 
-**Trackable solves this by:**
-- **👀 Observing:** Automatically detecting orders and deliveries via Gmail integration.
-- **🧠 Reasoning:** Understanding return policies, deadlines, and item details.
-- **🗣️ Acting:** Proactively notifying you of upcoming deadlines and guiding you through return processes via natural language chat.
+Instead of a dashboard you have to manage, Trackable works for you:
 
-This is not just another dashboard; it's an **agent** that works for you.
+*   **Connects to Gmail** to find your orders automatically. No forwarding emails or manual entry.
+*   **Tracks everything** in one place.
+*   **Reads the fine print** on return policies so you don't have to.
+*   **Nudges you** when a return window is about to close.
+*   **Chat with it** naturally. Ask "Can I still return those Nikes?" and it just tells you.
 
-## ✨ Features (MVP)
+## Tech Stack
 
-*   **Gmail Integration (OAuth)**: Connects securely to your inbox to auto-detect order confirmations and delivery updates.
-*   **Order Awareness**: Maintains a continuously updated list of your active orders and their status.
-*   **Shipment Tracking**: Normalized tracking across carriers.
-*   **Return Policy Analysis**: AI-powered extraction of return windows and policies from emails/policies.
-*   **Proactive Alerts**: Notifies you *before* deadlines expire (e.g., "3 days left to return these shoes").
-*   **Agent Chat**: Ask questions naturally like "Can I still return the Nike order?" or "Start an exchange."
-*   **Image Ingestion**: Upload screenshots of receipts for manual tracking.
+Built with **Next.js**, **Supabase**, and **Tailwind**. It uses the **Gmail API** to find orders and talks to our `trackable-agent` service for the AI brains.
 
-## 🛠 Tech Stack
+## Getting Started
 
-*   **Frontend**: [Next.js (App Router)](https://nextjs.org/) + [React](https://react.dev/)
-*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [Shadcn UI](https://ui.shadcn.com/)
-*   **Backend/Auth**: [Supabase](https://supabase.com/) (Auth, PostgreSQL, Realtime)
-*   **Integrations**: [Gmail API](https://developers.google.com/gmail/api)
-*   **AI Agent**: Communicates with `trackable-agent` service (using OpenAI-compatible API).
+You'll need a Supabase project and a Google Cloud project with the Gmail API enabled.
 
-## ⚡ Getting Started
-
-### Prerequisites
-
-*   Node.js 18+
-*   pnpm (`npm install -g pnpm`)
-*   A [Supabase](https://supabase.com/) project
-*   A [Google Cloud Project](https://console.cloud.google.com/) with Gmail API enabled (for OAuth)
-
-### Environment Setup
-
-1.  Copy the example environment file:
+1.  **Clone & Setup:**
     ```bash
     cp .env.example .env.local
-    ```
-
-2.  Fill in your credentials in `.env.local`:
-    ```env
-    # Site URL (used for OAuth redirect URLs)
-    NEXT_PUBLIC_SITE_URL=http://localhost:3000
-
-    # Supabase Configuration
-    NEXT_PUBLIC_SUPABASE_URL=your-project-url
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-
-    # Google OAuth (for Gmail integration)
-    GOOGLE_CLIENT_ID=your-client-id
-    GOOGLE_CLIENT_SECRET=your-client-secret
-    ```
-
-### Running Locally
-
-1.  Install dependencies:
-    ```bash
     pnpm install
     ```
 
-2.  Start the development server:
+2.  **Add Credentials** (`.env.local`):
+    *   `NEXT_PUBLIC_SUPABASE_URL` / `ANON_KEY`
+    *   `GOOGLE_CLIENT_ID` / `SECRET` (for OAuth)
+
+3.  **Run it:**
     ```bash
     pnpm dev
     ```
 
-3.  Open [http://localhost:3000](http://localhost:3000) to view the app.
+## Deployment
 
-## 📂 Project Structure
-
-```
-├── src/app             # Next.js App Router pages & API routes
-│   ├── (auth)          # Authentication routes (login)
-│   ├── api             # Backend API routes (agent, gmail, orders)
-│   └── app             # Protected application routes (dashboard)
-├── src/components      # React components
-│   ├── agent           # AI Agent interface components
-│   ├── dashboard       # Dashboard widgets
-│   ├── orders          # Order management UI
-│   └── ui              # Reusable UI components (shadcn)
-├── src/lib             # Utility libraries
-│   ├── gmail           # Gmail API client & sync logic
-│   ├── supabase        # Supabase client & auth helpers
-│   └── trackable-agent # AI Agent service client
-├── docs                # Documentation & PRDs
-└── public              # Static assets
-```
-
-## 🚢 Deployment
-
-The project is configured for deployment on **Google Cloud Run**. See `cloudbuild.yaml` for build configuration.
-
-## 🤝 Contributing
-
-1.  Fork the repository.
-2.  Create a feature branch (`git checkout -b feature/amazing-feature`).
-3.  Commit your changes (`git commit -m 'Add some amazing feature'`).
-4.  Push to the branch (`git push origin feature/amazing-feature`).
-5.  Open a Pull Request.
+We deploy to **Google Cloud Run**. Check `cloudbuild.yaml` if you need to mess with the build config.
 
 ---
 
-Built with ❤️ by the Trackable AI team.
+Built by the Trackable AI team.
