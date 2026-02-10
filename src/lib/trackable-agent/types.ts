@@ -48,8 +48,8 @@ export interface ImageIngestionResult {
 }
 
 export interface CreateOrderRequest {
-  merchant: string;
-  items: string[];
+  merchant?: string;
+  items?: string[];
   trackingNumber?: string;
   orderDate?: string;
   source: "manual" | "screenshot";

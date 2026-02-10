@@ -54,13 +54,6 @@ export async function POST(request: Request) {
       const { merchant, items, trackingNumber, orderDate, source, sourceJobId } =
         body;
 
-      if (!merchant) {
-        return NextResponse.json(
-          { error: "merchant is required" },
-          { status: 400 },
-        );
-      }
-
       // Call backend to create order
       const trackableApiUrl = getTrackableApiUrl();
 
