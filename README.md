@@ -1,38 +1,48 @@
 # Trackable
 
-Agentic AI tool for post-purchase experiences.
+**Your personal shopping agent.**
 
-## Development
+We all hate the post-purchase mess. Receipts buried in Gmail, return windows closing while you're busy, and navigating five different carrier sites just to see where your package is.
 
-```bash
-pnpm install
-pnpm dev
-```
+Trackable fixes this. It's an AI agent that lives in your inbox, watches your orders, and tells you what you need to know *before* you ask.
 
-Open [http://localhost:3000](http://localhost:3000)
+## What it does
+
+Instead of a dashboard you have to manage, Trackable works for you:
+
+*   **Connects to Gmail** to find your orders automatically. No forwarding emails or manual entry.
+*   **Tracks everything** in one place.
+*   **Reads the fine print** on return policies so you don't have to.
+*   **Nudges you** when a return window is about to close.
+*   **Chat with it** naturally. Ask "Can I still return those Nikes?" and it just tells you.
+
+## Tech Stack
+
+Built with **Next.js**, **Supabase**, and **Tailwind**. It uses the **Gmail API** to find orders and talks to our `trackable-agent` service for the AI brains.
+
+## Getting Started
+
+You'll need a Supabase project and a Google Cloud project with the Gmail API enabled.
+
+1.  **Clone & Setup:**
+    ```bash
+    cp .env.example .env.local
+    pnpm install
+    ```
+
+2.  **Add Credentials** (`.env.local`):
+    *   `NEXT_PUBLIC_SUPABASE_URL` / `ANON_KEY`
+    *   `GOOGLE_CLIENT_ID` / `SECRET` (for OAuth)
+
+3.  **Run it:**
+    ```bash
+    pnpm dev
+    ```
 
 ## Deployment
 
-See [cloudbuild.yaml](cloudbuild.yaml) for Cloud Run deployment instructions.
+We deploy to **Google Cloud Run**. Check `cloudbuild.yaml` if you need to mess with the build config.
 
-## API Routes
+---
 
-| Endpoint | Method | Auth | DB Client | Description |
-|----------|--------|------|-----------|-------------|
-| `/api/agent/chat` | POST | User session | `createClient` | AI chat proxy to trackable-agent |
-| `/api/agent/chat` | DELETE | User session | `createClient` | Clear chat session |
-| `/api/agent/chat` | GET | None | None | Health check |
-| `/api/orders` | POST | User session | `createClient` | Create order |
-| `/api/orders/upload` | POST | User session | `createClient` | Upload order image |
-| `/api/gmail/sync` | GET | User session | `createClient` | Get sync status |
-| `/api/gmail/sync` | POST | User session | `createClient` | Trigger email sync |
-| `/api/gmail/watch` | GET | User session | `createClient` | Get watch status |
-| `/api/gmail/watch` | POST | User session | `createClient` | Setup Gmail watch |
-| `/api/gmail/watch` | DELETE | User session | `createClient` | Stop Gmail watch |
-| `/api/gmail/webhook` | POST | Webhook secret | `createAdminClient` | Pub/Sub push notifications |
-| `/api/auth/callback` | GET | OAuth code | `createClient` | OAuth callback |
-
-### Supabase Clients
-
-- **`createClient`**: Uses user session from cookies. Subject to RLS policies. Use for user-initiated requests.
-- **`createAdminClient`**: Uses service role key. Bypasses RLS. Use for webhooks, cron jobs, or any server-to-server context without a user session.
+Built by the Trackable AI team.
