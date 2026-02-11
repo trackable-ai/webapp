@@ -124,10 +124,10 @@ export default function LandingPage() {
         {/* Hero Image */}
         <div className="mt-12 rounded-xl shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)]">
           <Image
-            src="/hero-dashboard.svg"
+            src="/hero-dashboard.png"
             alt="Trackable Dashboard showing return tracking and order management"
-            width={1000}
-            height={560}
+            width={1200}
+            height={800}
             priority
             className="rounded-xl border border-[#E8E8E8] bg-white"
           />
