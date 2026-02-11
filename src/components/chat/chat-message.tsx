@@ -8,9 +8,15 @@ import type { MessageRole, MessageAction } from "@/types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+interface MessageImage {
+  url: string;
+  mediaType?: string;
+}
+
 interface ChatMessageProps {
   role: MessageRole;
   content: string;
+  images?: MessageImage[];
   actions?: MessageAction[];
   onActionClick?: (action: MessageAction) => void;
   userAvatarUrl?: string | null;
@@ -20,6 +26,7 @@ interface ChatMessageProps {
 export function ChatMessage({
   role,
   content,
+  images,
   actions,
   onActionClick,
   userAvatarUrl,
@@ -56,33 +63,65 @@ export function ChatMessage({
           !isAgent && "items-end"
         )}
       >
-        <div
-          className={cn(
-            "rounded-2xl px-4 py-2.5",
-            isAgent
-              ? "bg-agent-message rounded-tl-sm"
-              : "bg-primary text-primary-foreground rounded-tr-sm"
-          )}
-        >
-          {isAgent ? (
-            <div className="prose prose-sm max-w-none text-sm [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  a: ({ children, ...props }) => (
-                    <a {...props} target="_blank" rel="noopener noreferrer" className="text-[#3B82F6] underline">
-                      {children}
-                    </a>
-                  ),
-                }}
+        {/* Images */}
+        {images && images.length > 0 && (
+          <div className={cn(
+            "flex flex-wrap gap-2",
+            images.length === 1 ? "max-w-xs" : "max-w-sm"
+          )}>
+            {images.map((img, index) => (
+              <div
+                key={index}
+                className={cn(
+                  "overflow-hidden rounded-2xl border border-border",
+                  images.length === 1 ? "max-h-64" : "h-24 w-24",
+                  !isAgent && "rounded-tr-sm",
+                  isAgent && "rounded-tl-sm"
+                )}
               >
-                {content}
-              </ReactMarkdown>
-            </div>
-          ) : (
-            <p className="text-sm whitespace-pre-wrap">{content}</p>
-          )}
-        </div>
+                <img
+                  src={img.url}
+                  alt={`Attachment ${index + 1}`}
+                  className={cn(
+                    "object-cover",
+                    images.length === 1 ? "max-h-64 w-auto" : "h-full w-full"
+                  )}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Text content */}
+        {content && (
+          <div
+            className={cn(
+              "rounded-2xl px-4 py-2.5",
+              isAgent
+                ? "bg-agent-message rounded-tl-sm"
+                : "bg-primary text-primary-foreground rounded-tr-sm"
+            )}
+          >
+            {isAgent ? (
+              <div className="prose prose-sm max-w-none text-sm [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    a: ({ children, ...props }) => (
+                      <a {...props} target="_blank" rel="noopener noreferrer" className="text-[#3B82F6] underline">
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  {content}
+                </ReactMarkdown>
+              </div>
+            ) : (
+              <p className="text-sm whitespace-pre-wrap">{content}</p>
+            )}
+          </div>
+        )}
 
         {actions && actions.length > 0 && (
           <div className="flex flex-wrap gap-2">
