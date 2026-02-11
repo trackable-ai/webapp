@@ -3,9 +3,11 @@
 import { useState, useRef, useCallback, KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Send, Paperclip, X, Loader2 } from "lucide-react";
+import { Send, Paperclip, X, Loader2, ImagePlus } from "lucide-react";
+import { toast } from "sonner";
 
-const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/gif,image/webp";
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+const ACCEPTED_IMAGE_TYPES_STR = ACCEPTED_IMAGE_TYPES.join(",");
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_FILES = 4;
 
@@ -31,31 +33,57 @@ export function ChatInput({
   const [message, setMessage] = useState("");
   const [images, setImages] = useState<ImagePreview[]>([]);
   const [imageLoading, setImageLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounterRef = useRef(0);
 
-  const addImages = useCallback((files: FileList | null) => {
+  const addImages = useCallback((files: FileList | File[] | null) => {
     if (!files || files.length === 0) return;
 
     setImageLoading(true);
-    const remaining = MAX_FILES - images.length;
-    const toAdd = Array.from(files).slice(0, remaining);
 
-    const valid = toAdd.filter((file) => {
-      if (!file.type.startsWith("image/")) return false;
-      if (file.size > MAX_FILE_SIZE) return false;
-      return true;
+    setImages((prev) => {
+      const remaining = MAX_FILES - prev.length;
+      if (remaining <= 0) {
+        toast.error(`Maximum ${MAX_FILES} images allowed.`);
+        setImageLoading(false);
+        return prev;
+      }
+
+      const toAdd = Array.from(files).slice(0, remaining);
+      if (toAdd.length < files.length) {
+        toast.error(`Only ${remaining} more image${remaining !== 1 ? "s" : ""} can be added.`);
+      }
+
+      const valid: File[] = [];
+      for (const file of toAdd) {
+        if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+          toast.error(`"${file.name}" is not a supported image type. Use JPEG, PNG, GIF, or WebP.`);
+          continue;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+          toast.error(`"${file.name}" exceeds the 5MB size limit.`);
+          continue;
+        }
+        valid.push(file);
+      }
+
+      if (valid.length === 0) {
+        setImageLoading(false);
+        return prev;
+      }
+
+      const previews: ImagePreview[] = valid.map((file) => ({
+        id: crypto.randomUUID(),
+        file,
+        url: URL.createObjectURL(file),
+      }));
+
+      setImageLoading(false);
+      return [...prev, ...previews];
     });
-
-    const previews: ImagePreview[] = valid.map((file) => ({
-      id: crypto.randomUUID(),
-      file,
-      url: URL.createObjectURL(file),
-    }));
-
-    setImages((prev) => [...prev, ...previews]);
-    setImageLoading(false);
-  }, [images.length]);
+  }, []);
 
   const removeImage = useCallback((id: string) => {
     setImages((prev) => {
@@ -66,16 +94,18 @@ export function ChatInput({
   }, []);
 
   const clearImages = useCallback(() => {
-    images.forEach((img) => URL.revokeObjectURL(img.url));
-    setImages([]);
+    setImages((prev) => {
+      prev.forEach((img) => URL.revokeObjectURL(img.url));
+      return [];
+    });
     if (fileInputRef.current) fileInputRef.current.value = "";
-  }, [images]);
+  }, []);
 
   const handleSend = () => {
     const hasContent = message.trim() || images.length > 0;
     if (!hasContent || disabled) return;
 
-    // Build a FileList-like structure from the images
+    // Build a FileList from the images
     if (images.length > 0) {
       const dt = new DataTransfer();
       images.forEach((img) => dt.items.add(img.file));
@@ -115,10 +145,85 @@ export function ChatInput({
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  // Drag-and-drop handlers
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current++;
+    if (e.dataTransfer.types.includes("Files") && !disabled) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current--;
+    if (dragCounterRef.current === 0) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounterRef.current = 0;
+    setIsDragging(false);
+
+    if (disabled) return;
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      addImages(files);
+    }
+  };
+
+  // Paste handler for images
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    const imageFiles: File[] = [];
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type.startsWith("image/")) {
+        const file = item.getAsFile();
+        if (file) imageFiles.push(file);
+      }
+    }
+
+    if (imageFiles.length > 0) {
+      e.preventDefault();
+      addImages(imageFiles);
+    }
+  };
+
   const canSend = (message.trim() || images.length > 0) && !disabled;
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div
+      className={cn("relative flex flex-col gap-2", className)}
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {/* Drag overlay */}
+      {isDragging && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-2 border-dashed border-[#3B82F6] bg-[#EFF6FF]/90">
+          <div className="flex flex-col items-center gap-2">
+            <ImagePlus className="h-8 w-8 text-[#3B82F6]" />
+            <p className="text-sm font-medium text-[#3B82F6]">
+              Drop images here
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Image previews */}
       {images.length > 0 && (
         <div className="flex gap-2 flex-wrap">
@@ -154,7 +259,7 @@ export function ChatInput({
         <input
           ref={fileInputRef}
           type="file"
-          accept={ACCEPTED_IMAGE_TYPES}
+          accept={ACCEPTED_IMAGE_TYPES_STR}
           multiple
           className="hidden"
           onChange={handleFileChange}
@@ -177,6 +282,7 @@ export function ChatInput({
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
+          onPaste={handlePaste}
           placeholder={placeholder}
           disabled={disabled}
           rows={1}

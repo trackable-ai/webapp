@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import type { UIMessage } from "ai";
+import type { UIMessage, FileUIPart } from "ai";
 import { DefaultChatTransport } from "ai";
 import { Suspense, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -17,6 +17,11 @@ type ChatDataTypes = {
 
 type AppUIMessage = UIMessage<unknown, ChatDataTypes>;
 
+interface MessageImage {
+  url: string;
+  mediaType?: string;
+}
+
 function getMessageContent(message: AppUIMessage): string {
   if (!message.parts || message.parts.length === 0) {
     return "";
@@ -27,6 +32,19 @@ function getMessageContent(message: AppUIMessage): string {
     )
     .map((part) => part.text)
     .join("");
+}
+
+function getMessageImages(message: AppUIMessage): MessageImage[] {
+  if (!message.parts) return [];
+  return message.parts
+    .filter(
+      (part): part is FileUIPart =>
+        part.type === "file" && part.mediaType.startsWith("image/"),
+    )
+    .map((part) => ({
+      url: part.url,
+      mediaType: part.mediaType,
+    }));
 }
 
 function getMessageSuggestions(message: AppUIMessage): Suggestion[] {
@@ -134,8 +152,16 @@ ${trackingLine}What would you like to know?`;
         ? defaultSuggestions
         : [];
 
-  const handleSend = (content: string) => {
-    if (content.trim()) {
+  const handleSend = (content: string, files?: FileList) => {
+    const hasText = content.trim().length > 0;
+    const hasFiles = files && files.length > 0;
+    if (!hasText && !hasFiles) return;
+
+    if (hasText && hasFiles) {
+      sendMessage({ text: content, files });
+    } else if (hasFiles) {
+      sendMessage({ files });
+    } else {
       sendMessage({ text: content });
     }
   };
@@ -175,12 +201,14 @@ ${trackingLine}What would you like to know?`;
               message.id === "welcome"
                 ? welcomeText
                 : getMessageContent(message);
-            if (!content) return null;
+            const images = getMessageImages(message);
+            if (!content && images.length === 0) return null;
             return (
               <ChatMessage
                 key={message.id}
                 role={message.role === "user" ? "user" : "agent"}
                 content={content}
+                images={images.length > 0 ? images : undefined}
                 userAvatarUrl={userAvatarUrl}
               />
             );
