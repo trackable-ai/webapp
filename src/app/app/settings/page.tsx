@@ -111,10 +111,10 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 px-10 py-8">
+    <div className="flex flex-col gap-6 p-4 md:px-10 md:py-8">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="font-heading text-[28px] font-semibold text-[#0D0D0D]">
+        <h1 className="font-heading text-2xl font-semibold text-[#0D0D0D] md:text-[28px]">
           Settings
         </h1>
         <p className="text-sm font-normal text-[#7A7A7A]">
@@ -146,16 +146,16 @@ export default function SettingsPage() {
               <Loader2 className="h-6 w-6 animate-spin text-[#7A7A7A]" />
             </div>
           ) : gmailStatus?.connected ? (
-            <div className="flex items-center justify-between rounded-lg border border-[#E8E8E8] p-4">
+            <div className="flex flex-col gap-4 rounded-lg border border-[#E8E8E8] p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ECFDF5]">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ECFDF5]">
                   <CheckCircle className="h-5 w-5 text-[#10B981]" />
                 </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="font-heading text-sm font-medium text-[#0D0D0D]">
+                <div className="flex flex-col gap-0.5 overflow-hidden">
+                  <span className="truncate font-heading text-sm font-medium text-[#0D0D0D]">
                     {gmailStatus.email}
                   </span>
-                  <span className="text-xs font-normal text-[#7A7A7A]">
+                  <span className="truncate text-xs font-normal text-[#7A7A7A]">
                     Connected
                     {gmailStatus.lastSynced &&
                       ` · Last synced ${formatDistanceToNow(new Date(gmailStatus.lastSynced), { addSuffix: true })}`}
@@ -166,7 +166,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleSync}
                   disabled={syncing}
-                  className="flex items-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA] disabled:opacity-50"
+                  className="flex flex-1 items-center justify-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA] disabled:opacity-50 sm:flex-none"
                 >
                   {syncing ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -178,7 +178,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleDisconnect}
                   disabled={disconnecting}
-                  className="flex items-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA] disabled:opacity-50"
+                  className="flex flex-1 items-center justify-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA] disabled:opacity-50 sm:flex-none"
                 >
                   {disconnecting && <Loader2 className="h-4 w-4 animate-spin" />}
                   Disconnect
@@ -196,7 +196,7 @@ export default function SettingsPage() {
               </p>
               <button
                 onClick={handleConnect}
-                className="flex items-center gap-2 rounded bg-[#3B82F6] px-5 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2563EB]"
+                className="flex w-full items-center justify-center gap-2 rounded bg-[#3B82F6] px-5 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2563EB] sm:w-auto"
               >
                 <Mail className="h-4 w-4" />
                 Connect Gmail
@@ -232,7 +232,7 @@ export default function SettingsPage() {
           </div>
 
           <div className="flex flex-col divide-y divide-[#E8E8E8]">
-            <div className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+            <div className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-0.5">
                 <span className="font-heading text-sm font-medium text-[#0D0D0D]">
                   Return deadline reminders
@@ -241,12 +241,12 @@ export default function SettingsPage() {
                   Get notified when return windows are closing
                 </span>
               </div>
-              <span className="rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#3B82F6]">
+              <span className="w-fit rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#3B82F6]">
                 Email + In-app
               </span>
             </div>
 
-            <div className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+            <div className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-0.5">
                 <span className="font-heading text-sm font-medium text-[#0D0D0D]">
                   Delivery updates
@@ -255,12 +255,12 @@ export default function SettingsPage() {
                   Track your packages in real-time
                 </span>
               </div>
-              <span className="rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#3B82F6]">
+              <span className="w-fit rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#3B82F6]">
                 In-app
               </span>
             </div>
 
-            <div className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+            <div className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-0.5">
                 <span className="font-heading text-sm font-medium text-[#0D0D0D]">
                   Agent recommendations
@@ -269,7 +269,7 @@ export default function SettingsPage() {
                   Suggestions for returns, exchanges, and more
                 </span>
               </div>
-              <span className="rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#3B82F6]">
+              <span className="w-fit rounded-full bg-[#EFF6FF] px-2.5 py-1 text-xs font-medium text-[#3B82F6]">
                 In-app
               </span>
             </div>
@@ -296,37 +296,37 @@ export default function SettingsPage() {
 
           <div className="flex flex-col gap-3">
             <div className="flex items-start gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 text-[#10B981]" />
+              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#10B981]" />
               <span className="text-sm font-normal text-[#7A7A7A]">
                 Your email data is never sold or shared with advertisers
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 text-[#10B981]" />
+              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#10B981]" />
               <span className="text-sm font-normal text-[#7A7A7A]">
                 We only access emails related to shopping and orders
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 text-[#10B981]" />
+              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#10B981]" />
               <span className="text-sm font-normal text-[#7A7A7A]">
                 You can delete all your data at any time
               </span>
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <a
               href="/privacy"
               target="_blank"
-              className="flex items-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]"
+              className="flex items-center justify-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]"
             >
               <ExternalLink className="h-4 w-4" />
               Privacy Policy
             </a>
             <a
               href="/data-export"
-              className="flex items-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]"
+              className="flex items-center justify-center gap-2 rounded border border-[#E8E8E8] bg-white px-4 py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]"
             >
               Export my data
             </a>
@@ -347,7 +347,7 @@ export default function SettingsPage() {
             </p>
           </div>
 
-          <div className="flex items-center justify-between rounded-lg border border-[#EF4444]/20 p-4">
+          <div className="flex flex-col gap-4 rounded-lg border border-[#EF4444]/20 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col gap-0.5">
               <span className="font-heading text-sm font-medium text-[#0D0D0D]">
                 Delete all data
@@ -356,7 +356,7 @@ export default function SettingsPage() {
                 Remove all your orders, preferences, and connected accounts
               </span>
             </div>
-            <button className="flex items-center gap-2 rounded bg-[#EF4444] px-4 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#DC2626]">
+            <button className="flex items-center justify-center gap-2 rounded bg-[#EF4444] px-4 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#DC2626]">
               <Trash2 className="h-4 w-4" />
               Delete Data
             </button>

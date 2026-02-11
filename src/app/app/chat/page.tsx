@@ -167,9 +167,9 @@ ${trackingLine}What would you like to know?`;
   };
 
   return (
-    <div className="flex h-[calc(100vh-56px)] flex-col px-10 py-8 lg:h-screen">
+    <div className="flex h-[calc(100dvh-56px)] flex-col p-4 md:px-10 md:py-8 lg:h-screen">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-[#E8E8E8] pb-6">
+      <div className="flex items-center gap-3 border-b border-[#E8E8E8] pb-4 md:pb-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EFF6FF]">
           <Sparkles className="h-5 w-5 text-[#3B82F6]" />
         </div>
@@ -194,7 +194,7 @@ ${trackingLine}What would you like to know?`;
       )}
 
       {/* Messages */}
-      <div ref={scrollAreaRef} className="flex-1 overflow-y-auto py-6">
+      <div ref={scrollAreaRef} className="flex-1 overflow-y-auto py-4 md:py-6">
         <div className="space-y-6">
           {messages.map((message) => {
             const content =

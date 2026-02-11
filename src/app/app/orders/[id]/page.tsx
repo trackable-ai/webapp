@@ -98,7 +98,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6 px-10 py-8">
+    <div className="flex flex-col gap-6 p-4 md:px-10 md:py-8">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link
@@ -108,7 +108,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
           <ArrowLeft className="h-4 w-4 text-[#7A7A7A]" />
         </Link>
         <div className="flex flex-col gap-1">
-          <h1 className="font-heading text-[28px] font-semibold text-[#0D0D0D]">
+          <h1 className="font-heading text-xl font-semibold text-[#0D0D0D] md:text-[28px]">
             Order Details
           </h1>
           <p className="text-sm font-normal text-[#7A7A7A]">
@@ -117,11 +117,11 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
         </div>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row">
         {/* Main content */}
         <div className="flex flex-1 flex-col gap-6">
           {/* Order items */}
-          <div className="rounded-lg border border-[#E8E8E8] bg-white p-6">
+          <div className="rounded-lg border border-[#E8E8E8] bg-white p-4 md:p-6">
             <h2 className="font-heading text-base font-semibold text-[#0D0D0D]">
               Items
             </h2>
@@ -142,7 +142,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-1 items-start justify-between">
+                  <div className="flex flex-1 flex-col justify-between gap-2 sm:flex-row sm:items-start">
                     <div className="flex flex-col gap-0.5">
                       <span className="font-heading text-sm font-medium text-[#0D0D0D]">
                         {item.name}
@@ -171,7 +171,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                         </div>
                       )}
                     </div>
-                    <span className="font-heading text-sm font-medium text-[#0D0D0D]">
+                    <span className="font-heading text-sm font-medium text-[#0D0D0D] sm:text-right">
                       {formatCents(item.totalCents)}
                     </span>
                   </div>
@@ -182,8 +182,8 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
           {/* Tabs */}
           <div className="flex flex-col gap-4">
-            <div className="border-b border-[#E8E8E8]">
-              <div className="flex">
+            <div className="overflow-x-auto border-b border-[#E8E8E8]">
+              <div className="flex min-w-max">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
@@ -203,42 +203,46 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
             {/* Tab content */}
             {activeTab === "tracking" && (
-              <div className="rounded-lg border border-[#E8E8E8] bg-white p-6">
+              <div className="rounded-lg border border-[#E8E8E8] bg-white p-4 md:p-6">
                 {order.shipment ? (
                   <>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-2">
                         <Package className="h-5 w-5 text-[#0D0D0D]" />
                         <span className="font-heading text-base font-semibold text-[#0D0D0D]">
                           {order.shipment.carrierName}
                         </span>
                       </div>
-                      <StatusBadge status={order.shipment.status as Order["status"]} />
+                      <div className="self-start sm:self-auto">
+                        <StatusBadge status={order.shipment.status as Order["status"]} />
+                      </div>
                     </div>
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="text-sm font-normal text-[#7A7A7A]">
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <span className="text-sm font-normal text-[#7A7A7A] break-all">
                         {order.shipment.trackingNumber}
                       </span>
-                      <button
-                        onClick={handleCopyTracking}
-                        className="flex h-6 w-6 items-center justify-center rounded transition-colors hover:bg-[#FAFAFA]"
-                      >
-                        {copied ? (
-                          <CheckCircle className="h-3 w-3 text-[#10B981]" />
-                        ) : (
-                          <Copy className="h-3 w-3 text-[#7A7A7A]" />
-                        )}
-                      </button>
-                      {order.shipment.trackingUrl && (
-                        <a
-                          href={order.shipment.trackingUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={handleCopyTracking}
                           className="flex h-6 w-6 items-center justify-center rounded transition-colors hover:bg-[#FAFAFA]"
                         >
-                          <ExternalLink className="h-3 w-3 text-[#7A7A7A]" />
-                        </a>
-                      )}
+                          {copied ? (
+                            <CheckCircle className="h-3 w-3 text-[#10B981]" />
+                          ) : (
+                            <Copy className="h-3 w-3 text-[#7A7A7A]" />
+                          )}
+                        </button>
+                        {order.shipment.trackingUrl && (
+                          <a
+                            href={order.shipment.trackingUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex h-6 w-6 items-center justify-center rounded transition-colors hover:bg-[#FAFAFA]"
+                          >
+                            <ExternalLink className="h-3 w-3 text-[#7A7A7A]" />
+                          </a>
+                        )}
+                      </div>
                     </div>
                     <div className="mt-6">
                       <TrackingTimeline
@@ -264,7 +268,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
             )}
 
             {activeTab === "return" && (
-              <div className="rounded-lg border border-[#E8E8E8] bg-white p-6">
+              <div className="rounded-lg border border-[#E8E8E8] bg-white p-4 md:p-6">
                 {order.returnPolicy ? (
                   <ReturnPolicyCard policy={order.returnPolicy} />
                 ) : (
@@ -284,7 +288,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
             )}
 
             {activeTab === "details" && (
-              <div className="rounded-lg border border-[#E8E8E8] bg-white p-6">
+              <div className="rounded-lg border border-[#E8E8E8] bg-white p-4 md:p-6">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-normal text-[#7A7A7A]">
@@ -355,9 +359,9 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
         </div>
 
         {/* Sidebar */}
-        <div className="flex w-[360px] shrink-0 flex-col gap-6">
+        <div className="flex w-full flex-col gap-6 lg:w-[360px] lg:shrink-0">
           {/* Order Summary Card */}
-          <div className="rounded-lg border border-[#E8E8E8] bg-white p-6">
+          <div className="rounded-lg border border-[#E8E8E8] bg-white p-4 md:p-6">
             <h3 className="font-heading text-base font-semibold text-[#0D0D0D]">
               Order Summary
             </h3>
@@ -417,7 +421,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
           </div>
 
           {/* Quick Actions */}
-          <div className="rounded-lg border border-[#E8E8E8] bg-white p-6">
+          <div className="rounded-lg border border-[#E8E8E8] bg-white p-4 md:p-6">
             <h3 className="font-heading text-base font-semibold text-[#0D0D0D]">
               Quick Actions
             </h3>

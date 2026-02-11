@@ -81,11 +81,11 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex flex-col gap-8 px-10 py-8">
+    <div className="flex flex-col gap-6 p-4 md:gap-8 md:px-10 md:py-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col gap-1">
-          <h1 className="font-heading text-[28px] font-semibold text-[#0D0D0D]">
+          <h1 className="font-heading text-2xl font-semibold text-[#0D0D0D] md:text-[28px]">
             {getGreeting()}, {getDisplayName(user)}
           </h1>
           <p className="text-sm font-normal text-[#7A7A7A]">
@@ -94,21 +94,21 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-3">
           {/* Search */}
-          <div className="flex items-center gap-2 rounded border border-[#E8E8E8] bg-[#FAFAFA] px-4 py-2.5">
+          <div className="flex flex-1 items-center gap-2 rounded border border-[#E8E8E8] bg-[#FAFAFA] px-4 py-2.5 md:flex-none">
             <Search className="h-4 w-4 text-[#B0B0B0]" />
             <span className="text-[13px] font-normal text-[#B0B0B0]">
               Search orders...
             </span>
           </div>
           {/* Notifications */}
-          <button className="flex h-10 w-10 items-center justify-center rounded border border-[#E8E8E8] bg-[#FAFAFA] transition-colors hover:bg-[#F5F5F5]">
+          <button className="flex h-10 w-10 shrink-0 items-center justify-center rounded border border-[#E8E8E8] bg-[#FAFAFA] transition-colors hover:bg-[#F5F5F5]">
             <Bell className="h-[18px] w-[18px] text-[#7A7A7A]" />
           </button>
         </div>
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-5">
         <MetricCard
           label="Active Orders"
           value={activeOrders.length}
@@ -148,7 +148,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Content Row */}
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row">
         {/* Left Column */}
         <div className="flex flex-1 flex-col gap-6">
           {/* Agent Card */}
@@ -177,7 +177,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Right Column */}
-        <div className="flex w-[360px] shrink-0 flex-col gap-6">
+        <div className="flex w-full flex-col gap-6 lg:w-[360px] lg:shrink-0">
           {/* Next Delivery Card */}
           {inTransitOrder && <DeliveryCard order={inTransitOrder} />}
 
