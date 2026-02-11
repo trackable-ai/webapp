@@ -1,5 +1,5 @@
 {
-  "version": "2.6",
+  "version": "2.7",
   "children": [
     {
       "type": "frame",
@@ -4659,6 +4659,7 @@
               "type": "frame",
               "id": "y7sF5",
               "name": "heroScreenshot",
+              "clip": true,
               "width": 1000,
               "height": 560,
               "fill": "$--bg-surface",
@@ -4679,19 +4680,425 @@
                 "blur": 64,
                 "spread": -12
               },
-              "layout": "vertical",
-              "justifyContent": "center",
-              "alignItems": "center",
               "children": [
                 {
-                  "type": "text",
-                  "id": "V4PlU",
-                  "name": "screenshotPlaceholder",
-                  "fill": "$--gray-400",
-                  "content": "Product Screenshot",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "500"
+                  "id": "yuClm",
+                  "type": "ref",
+                  "ref": "YT2A0",
+                  "height": "fill_container",
+                  "name": "sidebar",
+                  "descendants": {
+                    "WLUVp": {
+                      "gap": 4,
+                      "children": [
+                        {
+                          "id": "qhPB2",
+                          "type": "ref",
+                          "ref": "80kSU",
+                          "name": "nav1",
+                          "descendants": {
+                            "nWQkx": {
+                              "iconFontName": "layout-dashboard"
+                            },
+                            "CgtDl": {
+                              "content": "Dashboard"
+                            }
+                          }
+                        },
+                        {
+                          "id": "CpHpJ",
+                          "type": "ref",
+                          "ref": "5qhcW",
+                          "name": "nav2",
+                          "descendants": {
+                            "1LpDZ": {
+                              "iconFontName": "package"
+                            },
+                            "V7NLV": {
+                              "content": "Orders"
+                            }
+                          }
+                        },
+                        {
+                          "id": "AuBAk",
+                          "type": "ref",
+                          "ref": "5qhcW",
+                          "name": "nav3",
+                          "descendants": {
+                            "1LpDZ": {
+                              "iconFontName": "repeat"
+                            },
+                            "V7NLV": {
+                              "content": "Returns"
+                            }
+                          }
+                        },
+                        {
+                          "id": "VcuZM",
+                          "type": "ref",
+                          "ref": "5qhcW",
+                          "name": "nav4",
+                          "descendants": {
+                            "1LpDZ": {
+                              "iconFontName": "message-square"
+                            },
+                            "V7NLV": {
+                              "content": "AI Chat"
+                            }
+                          }
+                        },
+                        {
+                          "id": "UtoZk",
+                          "type": "ref",
+                          "ref": "5qhcW",
+                          "name": "nav5",
+                          "descendants": {
+                            "1LpDZ": {
+                              "iconFontName": "settings"
+                            },
+                            "V7NLV": {
+                              "content": "Settings"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "8y0dg",
+                  "name": "Main Content",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$--bg-page",
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": [
+                    28,
+                    32
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "zIWXq",
+                      "name": "pageHeader",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "hSE9X",
+                          "name": "phLeft",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "xUXw9",
+                              "name": "phTitle",
+                              "fill": "$--black-primary",
+                              "content": "Dashboard",
+                              "fontFamily": "Space Grotesk",
+                              "fontSize": 22,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "MOXVl",
+                              "name": "phSub",
+                              "fill": "$--gray-700",
+                              "content": "Track your orders and returns at a glance",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "JbDHg",
+                          "name": "phActions",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "gUe0z",
+                              "name": "searchBox",
+                              "fill": "$--bg-card",
+                              "cornerRadius": "$--radius-sm",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "$--border"
+                              },
+                              "gap": 8,
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "3oIN8",
+                                  "name": "searchIcon",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "search",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$--gray-400"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "SjSGm",
+                                  "name": "searchText",
+                                  "fill": "$--gray-400",
+                                  "content": "Search orders...",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "id": "9gUMZ",
+                              "type": "ref",
+                              "ref": "9FejO",
+                              "name": "addBtn",
+                              "descendants": {
+                                "TCXbQ": {
+                                  "iconFontName": "plus"
+                                },
+                                "Ez2qo": {
+                                  "content": "Add Order"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uEBZX",
+                      "name": "metricsRow",
+                      "width": "fill_container",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "id": "ueuUX",
+                          "type": "ref",
+                          "ref": "MM0Y0",
+                          "width": "fill_container",
+                          "name": "mc1",
+                          "descendants": {
+                            "UravN": {
+                              "content": "Active Orders"
+                            },
+                            "hQ4jS": {
+                              "content": "24"
+                            },
+                            "RANPI": {
+                              "content": "+12% from last month"
+                            }
+                          }
+                        },
+                        {
+                          "id": "ahAxz",
+                          "type": "ref",
+                          "ref": "MM0Y0",
+                          "width": "fill_container",
+                          "name": "mc2",
+                          "descendants": {
+                            "UravN": {
+                              "content": "In Transit"
+                            },
+                            "hQ4jS": {
+                              "content": "8"
+                            },
+                            "ZBRlJ": {
+                              "iconFontName": "truck",
+                              "fill": "$--primary"
+                            },
+                            "RANPI": {
+                              "content": "3 arriving today"
+                            }
+                          }
+                        },
+                        {
+                          "id": "u8OX8",
+                          "type": "ref",
+                          "ref": "MM0Y0",
+                          "width": "fill_container",
+                          "name": "mc3",
+                          "descendants": {
+                            "UravN": {
+                              "content": "Return Windows"
+                            },
+                            "hQ4jS": {
+                              "content": "3"
+                            },
+                            "ZBRlJ": {
+                              "iconFontName": "timer",
+                              "fill": "$--amber-warning"
+                            },
+                            "RANPI": {
+                              "content": "2 expiring soon"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LfaB3",
+                      "name": "Orders Section",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Zr12C",
+                          "name": "ordersHeader",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "GyfZm",
+                              "name": "ohTitle",
+                              "fill": "$--black-primary",
+                              "content": "Recent Orders",
+                              "fontFamily": "Space Grotesk",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "QcEwU",
+                              "name": "ohLink",
+                              "fill": "$--primary",
+                              "content": "View all",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CfNKI",
+                          "name": "ordersList",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "id": "2KgoD",
+                              "type": "ref",
+                              "ref": "hPOmM",
+                              "width": "fill_container",
+                              "name": "oc1",
+                              "descendants": {
+                                "EKbqc": {
+                                  "content": "Apple Store"
+                                },
+                                "gsARB": {
+                                  "content": "MacBook Pro 14\""
+                                },
+                                "yZmLZ": {
+                                  "id": "Vcf3t",
+                                  "type": "ref",
+                                  "ref": "7JOka",
+                                  "name": "oc1badge"
+                                },
+                                "63xm0": {
+                                  "content": "Jan 15, 2026"
+                                }
+                              }
+                            },
+                            {
+                              "id": "s8pkf",
+                              "type": "ref",
+                              "ref": "hPOmM",
+                              "width": "fill_container",
+                              "name": "oc2",
+                              "descendants": {
+                                "EKbqc": {
+                                  "content": "Amazon"
+                                },
+                                "gsARB": {
+                                  "content": "Sony WH-1000XM5"
+                                },
+                                "yZmLZ": {
+                                  "id": "fXPOj",
+                                  "type": "ref",
+                                  "ref": "qA8K5",
+                                  "name": "oc2badge"
+                                },
+                                "63xm0": {
+                                  "content": "Jan 12, 2026"
+                                }
+                              }
+                            },
+                            {
+                              "id": "hrCyi",
+                              "type": "ref",
+                              "ref": "hPOmM",
+                              "width": "fill_container",
+                              "name": "oc3",
+                              "descendants": {
+                                "EKbqc": {
+                                  "content": "Nike"
+                                },
+                                "gsARB": {
+                                  "content": "Air Max 90"
+                                },
+                                "yZmLZ": {
+                                  "id": "D4eGE",
+                                  "type": "ref",
+                                  "ref": "hqCMz",
+                                  "name": "oc3badge"
+                                },
+                                "63xm0": {
+                                  "content": "Jan 8, 2026"
+                                }
+                              }
+                            },
+                            {
+                              "id": "n2U5a",
+                              "type": "ref",
+                              "ref": "hPOmM",
+                              "width": "fill_container",
+                              "name": "oc4",
+                              "descendants": {
+                                "EKbqc": {
+                                  "content": "Uniqlo"
+                                },
+                                "gsARB": {
+                                  "content": "Puffer Jacket"
+                                },
+                                "yZmLZ": {
+                                  "id": "aoNTA",
+                                  "type": "ref",
+                                  "ref": "5OMMy",
+                                  "name": "oc4badge"
+                                },
+                                "63xm0": {
+                                  "content": "Jan 5, 2026"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             },
