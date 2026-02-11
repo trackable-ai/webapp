@@ -121,11 +121,16 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Screenshot Placeholder */}
-        <div className="mt-12 flex h-[560px] w-[1000px] items-center justify-center rounded-xl border border-[#E8E8E8] bg-[#FAFAFA] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)]">
-          <span className="text-base font-medium text-[#B0B0B0]">
-            Product Screenshot
-          </span>
+        {/* Hero Image */}
+        <div className="mt-12 rounded-xl shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)]">
+          <Image
+            src="/hero-dashboard.svg"
+            alt="Trackable Dashboard showing return tracking and order management"
+            width={1000}
+            height={560}
+            priority
+            className="rounded-xl border border-[#E8E8E8] bg-white"
+          />
         </div>
 
         {/* Trust Section */}
