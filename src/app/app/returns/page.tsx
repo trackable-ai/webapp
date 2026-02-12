@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useOrders } from "@/hooks/use-orders";
 import { format } from "date-fns";
 import { RotateCcw, Package, AlertCircle, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function ReturnsPage() {
   const { orders } = useOrders();
@@ -23,10 +24,10 @@ export default function ReturnsPage() {
   );
 
   return (
-    <div className="flex flex-col gap-6 px-10 py-8">
+    <div className="flex flex-col gap-6 p-4 md:px-10 md:py-8">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="font-heading text-[28px] font-semibold text-[#0D0D0D]">
+        <h1 className="font-heading text-2xl font-semibold text-[#0D0D0D] md:text-[28px]">
           Returns & Exchanges
         </h1>
         <p className="text-sm font-normal text-[#7A7A7A]">
@@ -35,7 +36,7 @@ export default function ReturnsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <div className="flex items-center gap-4 rounded-lg border border-[#E8E8E8] bg-white p-5">
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#F5F3FF]">
             <RotateCcw className="h-6 w-6 text-[#8B5CF6]" />
@@ -92,56 +93,60 @@ export default function ReturnsPage() {
                 key={order.id}
                 className="flex flex-col gap-4 rounded-lg border border-[#E8E8E8] bg-white p-5"
               >
-                <div className="flex items-start gap-4">
-                  {/* Product image */}
-                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded bg-[#FAFAFA]">
-                    {order.items[0].imageUrl ? (
-                      <Image
-                        src={order.items[0].imageUrl}
-                        alt={order.items[0].name}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <Package className="h-8 w-8 text-[#B0B0B0]" />
-                      </div>
-                    )}
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                  <div className="flex items-start gap-4">
+                    {/* Product image */}
+                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded bg-[#FAFAFA]">
+                      {order.items[0].imageUrl ? (
+                        <Image
+                          src={order.items[0].imageUrl}
+                          alt={order.items[0].name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <Package className="h-8 w-8 text-[#B0B0B0]" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Order details */}
+                    <div className="flex flex-1 flex-col gap-1">
+                      <span className="font-heading text-sm font-medium text-[#0D0D0D]">
+                        {order.items[0].name}
+                      </span>
+                      <span className="text-xs font-normal text-[#7A7A7A]">
+                        {order.merchant.name} · #{order.orderNumber}
+                      </span>
+                      <span className="text-xs font-normal text-[#7A7A7A]">
+                        Delivered{" "}
+                        {format(new Date(order.deliveredAt!), "MMMM d, yyyy")}
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Order details */}
-                  <div className="flex flex-1 flex-col gap-1">
-                    <span className="font-heading text-sm font-medium text-[#0D0D0D]">
-                      {order.items[0].name}
-                    </span>
-                    <span className="text-xs font-normal text-[#7A7A7A]">
-                      {order.merchant.name} · #{order.orderNumber}
-                    </span>
-                    <span className="text-xs font-normal text-[#7A7A7A]">
-                      Delivered{" "}
-                      {format(new Date(order.deliveredAt!), "MMMM d, yyyy")}
-                    </span>
-                  </div>
-
-                  {/* Deadline */}
+                  {/* Deadline - Moved to top right on desktop, inline on mobile */}
                   {order.returnPolicy?.daysRemaining !== undefined && (
                     <div
-                      className={`rounded-full px-3 py-1.5 ${
+                      className={cn(
+                        "ml-auto rounded-full px-3 py-1.5 self-start",
                         order.returnPolicy.daysRemaining <= 3
                           ? "bg-[#FEF2F2]"
                           : order.returnPolicy.daysRemaining <= 7
                             ? "bg-[#FEF3C7]"
                             : "bg-[#ECFDF5]"
-                      }`}
+                      )}
                     >
                       <span
-                        className={`text-xs font-medium ${
+                        className={cn(
+                          "text-xs font-medium",
                           order.returnPolicy.daysRemaining <= 3
                             ? "text-[#EF4444]"
                             : order.returnPolicy.daysRemaining <= 7
                               ? "text-[#F59E0B]"
                               : "text-[#10B981]"
-                        }`}
+                        )}
                       >
                         {order.returnPolicy.daysRemaining} days left
                       </span>
@@ -150,7 +155,7 @@ export default function ReturnsPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Link
                     href={`/app/orders/${order.id}?tab=return`}
                     className="flex items-center justify-center gap-2 rounded bg-[#3B82F6] px-5 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2563EB]"
@@ -166,7 +171,7 @@ export default function ReturnsPage() {
                   </Link>
 
                   {/* Policy badges */}
-                  <div className="ml-auto flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
                     <span className="rounded-full border border-[#E8E8E8] px-2.5 py-1 text-xs font-normal text-[#7A7A7A]">
                       {order.returnPolicy?.freeReturn
                         ? "Free return"

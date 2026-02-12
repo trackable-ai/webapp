@@ -126,20 +126,20 @@ export default function OrdersPage() {
   );
 
   return (
-    <div className="flex flex-col gap-6 px-10 py-8">
+    <div className="flex flex-col gap-6 p-4 md:px-10 md:py-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col gap-1">
-          <h1 className="font-heading text-[28px] font-semibold text-[#0D0D0D]">
+          <h1 className="font-heading text-2xl font-semibold text-[#0D0D0D] md:text-[28px]">
             Orders
           </h1>
           <p className="text-sm font-normal text-[#7A7A7A]">
             Manage and track all your orders in one place
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {/* Search */}
-          <div className="flex w-[280px] items-center gap-2 rounded border border-[#E8E8E8] bg-[#FAFAFA] px-4 py-2.5">
+          <div className="flex w-full items-center gap-2 rounded border border-[#E8E8E8] bg-[#FAFAFA] px-4 py-2.5 sm:w-[280px]">
             <Search className="h-4 w-4 text-[#B0B0B0]" />
             <input
               type="text"
@@ -152,19 +152,20 @@ export default function OrdersPage() {
               className="flex-1 bg-transparent text-[13px] font-normal text-[#0D0D0D] placeholder:text-[#B0B0B0] focus:outline-none"
             />
           </div>
-          {/* Filter */}
-          <button className="flex items-center gap-2 rounded border border-[#E8E8E8] bg-white px-5 py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA]">
-            <Filter className="h-4 w-4 text-[#7A7A7A]" />
-            Filter
-          </button>
-          {/* Add Order */}
-          <button
-            onClick={() => setAddOrderOpen(true)}
-            className="flex items-center gap-2 rounded bg-[#3B82F6] px-5 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2563EB]"
-          >
-            <Plus className="h-4 w-4" />
-            Add Order
-          </button>
+          {/* Actions */}
+          <div className="flex gap-3">
+            <button className="flex flex-1 items-center justify-center gap-2 rounded border border-[#E8E8E8] bg-white px-5 py-2.5 text-[13px] font-medium text-[#0D0D0D] transition-colors hover:bg-[#FAFAFA] sm:flex-none">
+              <Filter className="h-4 w-4 text-[#7A7A7A]" />
+              Filter
+            </button>
+            <button
+              onClick={() => setAddOrderOpen(true)}
+              className="flex flex-1 items-center justify-center gap-2 rounded bg-[#3B82F6] px-5 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2563EB] sm:flex-none"
+            >
+              <Plus className="h-4 w-4" />
+              Add Order
+            </button>
+          </div>
         </div>
       </div>
 
@@ -178,8 +179,8 @@ export default function OrdersPage() {
       />
 
       {/* Tabs */}
-      <div className="border-b border-[#E8E8E8]">
-        <div className="flex">
+      <div className="overflow-x-auto border-b border-[#E8E8E8]">
+        <div className="flex min-w-max">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -223,7 +224,7 @@ export default function OrdersPage() {
           </div>
         ) : paginatedOrders.length > 0 ? (
           <div className="divide-y divide-[#E8E8E8]">
-            <div className="grid grid-cols-[auto_1fr_minmax(120px,auto)_120px_100px] items-center gap-4 border-b border-[#E8E8E8] bg-[#FAFAFA] px-5 py-2.5">
+            <div className="hidden grid-cols-[auto_1fr_minmax(120px,auto)_120px_100px] items-center gap-4 border-b border-[#E8E8E8] bg-[#FAFAFA] px-5 py-2.5 md:grid">
               <div className="h-14 w-14 shrink-0" />
               <SortHeader field="merchant" label="Order" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
               <SortHeader field="orderNumber" label="Order #" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} className="hidden md:flex" />
@@ -241,7 +242,7 @@ export default function OrdersPage() {
 
       {/* Pagination */}
       {filteredOrders.length > 0 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <span className="text-[13px] font-normal text-[#7A7A7A]">
             Showing {(currentPage - 1) * itemsPerPage + 1}-
             {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of{" "}
@@ -328,63 +329,68 @@ function OrderRow({ order }: { order: Order }) {
   return (
     <Link
       href={`/app/orders/${order.id}`}
-      className="grid grid-cols-[auto_1fr_minmax(120px,auto)_120px_100px] items-center gap-4 px-5 py-4 transition-colors hover:bg-[#FAFAFA]"
+      className="flex flex-col gap-4 p-4 transition-colors hover:bg-[#FAFAFA] sm:grid sm:grid-cols-[auto_1fr_minmax(120px,auto)_120px_100px] sm:items-center sm:px-5"
     >
-      {/* Product image */}
-      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded bg-[#FAFAFA]">
-        {firstItem?.imageUrl ? (
-          <Image
-            src={firstItem.imageUrl}
-            alt={firstItem.name}
-            fill
-            className="object-cover"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Package className="h-5 w-5 text-[#B0B0B0]" />
-          </div>
-        )}
+      <div className="flex items-center gap-4 sm:contents">
+        {/* Product image */}
+        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded bg-[#FAFAFA]">
+          {firstItem?.imageUrl ? (
+            <Image
+              src={firstItem.imageUrl}
+              alt={firstItem.name}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              <Package className="h-5 w-5 text-[#B0B0B0]" />
+            </div>
+          )}
+        </div>
+
+        {/* Order info */}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="truncate font-heading text-sm font-medium text-[#0D0D0D]">
+            {order.merchant.name || firstItem?.name || "Order"}
+          </span>
+          <span className="truncate text-xs font-normal text-[#7A7A7A]">
+            {order.merchant.name
+              ? `${firstItem?.name ?? "Order"}${order.items.length > 1 ? ` +${order.items.length - 1} more` : ""}`
+              : order.items.length > 1
+                ? `${order.items.length} items`
+                : ""}
+          </span>
+        </div>
       </div>
 
-      {/* Order info */}
-      <div className="flex min-w-0 flex-col gap-1">
-        <span className="truncate font-heading text-sm font-medium text-[#0D0D0D]">
-          {order.merchant.name || firstItem?.name || "Order"}
-        </span>
-        <span className="truncate text-xs font-normal text-[#7A7A7A]">
-          {order.merchant.name
-            ? `${firstItem?.name ?? "Order"}${order.items.length > 1 ? ` +${order.items.length - 1} more` : ""}`
-            : order.items.length > 1
-              ? `${order.items.length} items`
-              : ""}
-        </span>
-      </div>
-
-      {/* Order number */}
+      {/* Order number - Hidden on mobile, block on md */}
       <span className="hidden truncate text-sm font-normal text-[#7A7A7A] md:block">
         #{order.orderNumber}
       </span>
 
-      {/* Status */}
-      <div>
-        {showReturnEligible ? (
-          <div className="inline-flex rounded-full bg-[#F5F3FF] px-2.5 py-1">
-            <span className="text-xs font-medium text-[#8B5CF6]">
-              Return Eligible
-            </span>
-          </div>
-        ) : (
-          <StatusBadge status={order.status} />
-        )}
-      </div>
+      {/* Mobile Footer: Status + Date */}
+      <div className="flex items-center justify-between sm:contents">
+        {/* Status */}
+        <div>
+          {showReturnEligible ? (
+            <div className="inline-flex rounded-full bg-[#F5F3FF] px-2.5 py-1">
+              <span className="text-xs font-medium text-[#8B5CF6]">
+                Return Eligible
+              </span>
+            </div>
+          ) : (
+            <StatusBadge status={order.status} />
+          )}
+        </div>
 
-      {/* Date */}
-      <span className="text-right text-xs font-normal text-[#7A7A7A]">
-        {format(
-          new Date(order.deliveredAt || order.orderedAt),
-          "MMM d, yyyy"
-        )}
-      </span>
+        {/* Date */}
+        <span className="text-right text-xs font-normal text-[#7A7A7A]">
+          {format(
+            new Date(order.deliveredAt || order.orderedAt),
+            "MMM d, yyyy"
+          )}
+        </span>
+      </div>
     </Link>
   );
 }

@@ -19,7 +19,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white font-body">
       {/* Header */}
       <header className="w-full border-b border-[#E8E8E8]">
-        <div className="flex items-center justify-between px-16 py-5">
+        <div className="flex items-center justify-between px-4 py-4 md:px-16 md:py-5">
           {/* Left: Logo + Nav */}
           <div className="flex items-center gap-12">
             {/* Logo */}
@@ -36,8 +36,8 @@ export default function LandingPage() {
               </span>
             </Link>
 
-            {/* Nav */}
-            <nav className="flex items-center gap-8">
+            {/* Nav - Hidden on mobile */}
+            <nav className="hidden items-center gap-8 md:flex">
               <Link
                 href="#features"
                 className="text-sm font-medium text-[#7A7A7A] hover:text-[#0D0D0D] transition-colors"
@@ -69,7 +69,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/app"
-              className="flex items-center gap-2 rounded bg-[#3B82F6] px-5 py-2.5 text-[13px] font-medium text-white hover:bg-[#2563EB] transition-colors"
+              className="flex items-center gap-2 rounded bg-[#3B82F6] px-4 py-2 text-[13px] font-medium text-white hover:bg-[#2563EB] transition-colors md:px-5 md:py-2.5"
             >
               Get Started
               <ArrowRight className="h-4 w-4" />
@@ -79,9 +79,9 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="flex flex-col items-center px-16 py-20">
+      <section className="flex flex-col items-center px-4 py-12 md:px-16 md:py-20">
         {/* Hero Content */}
-        <div className="flex w-[800px] flex-col items-center gap-6">
+        <div className="flex w-full max-w-[800px] flex-col items-center gap-6">
           {/* Badge */}
           <div className="flex items-center gap-2 rounded-full bg-[#EFF6FF] px-4 py-2">
             <Sparkles className="h-3.5 w-3.5 text-[#3B82F6]" />
@@ -91,29 +91,29 @@ export default function LandingPage() {
           </div>
 
           {/* Headline */}
-          <h1 className="w-[800px] text-center font-heading text-[56px] font-bold leading-tight text-[#0D0D0D]">
+          <h1 className="w-full text-center font-heading text-4xl font-bold leading-tight text-[#0D0D0D] md:text-[56px]">
             Never miss a return deadline again
           </h1>
 
           {/* Subline */}
-          <p className="w-[640px] text-center text-lg text-[#7A7A7A]">
+          <p className="w-full max-w-[640px] text-center text-base text-[#7A7A7A] md:text-lg">
             Trackable is your personal AI agent that manages everything after
             checkout. Track orders, monitor return windows, and get proactive
             recommendations — all automatically from your email.
           </p>
 
           {/* CTAs */}
-          <div className="flex items-center gap-4">
+          <div className="flex w-full flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link
               href="/app"
-              className="flex items-center gap-2 rounded bg-[#3B82F6] px-5 py-2.5 text-[15px] font-medium text-white hover:bg-[#2563EB] transition-colors"
+              className="flex w-full items-center justify-center gap-2 rounded bg-[#3B82F6] px-5 py-3 text-[15px] font-medium text-white hover:bg-[#2563EB] transition-colors sm:w-auto sm:py-2.5"
             >
               <Mail className="h-4 w-4" />
               Connect Gmail to Start
             </Link>
             <Link
               href="#how-it-works"
-              className="flex items-center gap-2 rounded border border-[#E8E8E8] bg-white px-5 py-2.5 text-[15px] font-medium text-[#0D0D0D] hover:bg-[#FAFAFA] transition-colors"
+              className="flex w-full items-center justify-center gap-2 rounded border border-[#E8E8E8] bg-white px-5 py-3 text-[15px] font-medium text-[#0D0D0D] hover:bg-[#FAFAFA] transition-colors sm:w-auto sm:py-2.5"
             >
               See How It Works
               <ArrowRight className="h-4 w-4 text-[#7A7A7A]" />
@@ -122,23 +122,23 @@ export default function LandingPage() {
         </div>
 
         {/* Hero Image */}
-        <div className="mt-12 rounded-xl shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)]">
+        <div className="mt-12 w-full max-w-[1200px] rounded-xl shadow-[0_24px_64px_-12px_rgba(0,0,0,0.08)]">
           <Image
             src="/hero-dashboard.png"
             alt="Trackable Dashboard showing return tracking and order management"
             width={1200}
             height={800}
             priority
-            className="rounded-xl border border-[#E8E8E8] bg-white"
+            className="h-auto w-full rounded-xl border border-[#E8E8E8] bg-white"
           />
         </div>
 
         {/* Trust Section */}
-        <div className="mt-12 flex flex-col items-center gap-4">
+        <div className="mt-12 flex flex-col items-center gap-4 text-center">
           <p className="text-[13px] text-[#B0B0B0]">
             Post-purchase is broken for consumers
           </p>
-          <div className="flex items-center gap-10">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-10">
             <span className="font-heading text-lg font-semibold text-[#B0B0B0]">
               20-30%
             </span>
@@ -156,25 +156,25 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="w-full bg-[#FAFAFA] px-16 py-20">
+      <section id="how-it-works" className="w-full bg-[#FAFAFA] px-4 py-12 md:px-16 md:py-20">
         <div className="flex flex-col items-center gap-12">
           {/* Header */}
-          <div className="flex w-[600px] flex-col items-center gap-4">
+          <div className="flex w-full max-w-[600px] flex-col items-center gap-4 text-center">
             <span className="text-xs font-semibold tracking-[1.5px] text-[#3B82F6]">
               HOW IT WORKS
             </span>
-            <h2 className="text-center font-heading text-[40px] font-bold text-[#0D0D0D]">
+            <h2 className="font-heading text-3xl font-bold text-[#0D0D0D] md:text-[40px]">
               Get started in seconds
             </h2>
-            <p className="text-center text-base text-[#7A7A7A]">
+            <p className="text-base text-[#7A7A7A]">
               Your agent handles the rest
             </p>
           </div>
 
           {/* Steps */}
-          <div className="flex w-full gap-8">
+          <div className="flex w-full flex-col gap-6 md:flex-row md:gap-8">
             {/* Step 1 */}
-            <div className="flex flex-1 flex-col gap-5 rounded-xl border border-[#E8E8E8] bg-white p-8">
+            <div className="flex flex-1 flex-col gap-5 rounded-xl border border-[#E8E8E8] bg-white p-6 md:p-8">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EFF6FF]">
                 <span className="font-heading text-xl font-bold text-[#3B82F6]">
                   1
@@ -192,7 +192,7 @@ export default function LandingPage() {
             </div>
 
             {/* Step 2 */}
-            <div className="flex flex-1 flex-col gap-5 rounded-xl border border-[#E8E8E8] bg-white p-8">
+            <div className="flex flex-1 flex-col gap-5 rounded-xl border border-[#E8E8E8] bg-white p-6 md:p-8">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EFF6FF]">
                 <span className="font-heading text-xl font-bold text-[#3B82F6]">
                   2
@@ -210,7 +210,7 @@ export default function LandingPage() {
             </div>
 
             {/* Step 3 */}
-            <div className="flex flex-1 flex-col gap-5 rounded-xl border border-[#E8E8E8] bg-white p-8">
+            <div className="flex flex-1 flex-col gap-5 rounded-xl border border-[#E8E8E8] bg-white p-6 md:p-8">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EFF6FF]">
                 <span className="font-heading text-xl font-bold text-[#3B82F6]">
                   3
@@ -231,17 +231,17 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="w-full px-16 py-20">
+      <section id="features" className="w-full px-4 py-12 md:px-16 md:py-20">
         <div className="flex flex-col items-center gap-12">
           {/* Header */}
-          <div className="flex w-[600px] flex-col items-center gap-4">
+          <div className="flex w-full max-w-[600px] flex-col items-center gap-4 text-center">
             <span className="text-xs font-semibold tracking-[1.5px] text-[#3B82F6]">
               AGENT CAPABILITIES
             </span>
-            <h2 className="text-center font-heading text-[40px] font-bold text-[#0D0D0D]">
+            <h2 className="font-heading text-3xl font-bold text-[#0D0D0D] md:text-[40px]">
               Your AI agent that works for you
             </h2>
-            <p className="text-center text-base text-[#7A7A7A]">
+            <p className="text-base text-[#7A7A7A]">
               Trackable is not a dashboard — it&apos;s an intelligent agent that
               proactively manages your post-purchase experience.
             </p>
@@ -250,9 +250,9 @@ export default function LandingPage() {
           {/* Feature Grid */}
           <div className="flex w-full flex-col gap-6">
             {/* Row 1 */}
-            <div className="flex gap-6">
+            <div className="flex flex-col gap-6 md:flex-row">
               {/* Feature 1 */}
-              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-7">
+              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-6 md:p-7">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#EFF6FF]">
                   <MapPin className="h-6 w-6 text-[#3B82F6]" />
                 </div>
@@ -266,7 +266,7 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 2 */}
-              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-7">
+              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-6 md:p-7">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#ECFDF5]">
                   <RefreshCw className="h-6 w-6 text-[#10B981]" />
                 </div>
@@ -280,7 +280,7 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 3 */}
-              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-7">
+              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-6 md:p-7">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#F5F3FF]">
                   <Bot className="h-6 w-6 text-[#8B5CF6]" />
                 </div>
@@ -295,9 +295,9 @@ export default function LandingPage() {
             </div>
 
             {/* Row 2 */}
-            <div className="flex gap-6">
+            <div className="flex flex-col gap-6 md:flex-row">
               {/* Feature 4 */}
-              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-7">
+              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-6 md:p-7">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#FEF3C7]">
                   <Bell className="h-6 w-6 text-[#F59E0B]" />
                 </div>
@@ -311,7 +311,7 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 5 */}
-              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-7">
+              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-6 md:p-7">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#EFF6FF]">
                   <BarChart3 className="h-6 w-6 text-[#3B82F6]" />
                 </div>
@@ -325,7 +325,7 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 6 */}
-              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-7">
+              <div className="flex flex-1 flex-col gap-4 rounded-xl bg-[#FAFAFA] p-6 md:p-7">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#ECFDF5]">
                   <Mail className="h-6 w-6 text-[#10B981]" />
                 </div>
@@ -343,42 +343,42 @@ export default function LandingPage() {
       </section>
 
       {/* Social Proof Section */}
-      <section className="w-full bg-[#0D0D0D] px-16 py-20">
-        <div className="flex flex-col items-center gap-16">
+      <section className="w-full bg-[#0D0D0D] px-4 py-12 md:px-16 md:py-20">
+        <div className="flex flex-col items-center gap-12 md:gap-16">
           {/* Stats Row */}
-          <div className="flex items-center justify-center gap-16">
-            <div className="flex flex-col items-center gap-1">
-              <span className="font-heading text-5xl font-bold text-white">
+          <div className="flex flex-wrap justify-center gap-8 md:gap-16">
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="font-heading text-3xl font-bold text-white md:text-5xl">
                 20-30%
               </span>
-              <span className="text-sm text-[#B0B0B0]">Average return rate</span>
+              <span className="text-xs text-[#B0B0B0] md:text-sm">Average return rate</span>
             </div>
-            <div className="flex flex-col items-center gap-1">
-              <span className="font-heading text-5xl font-bold text-white">
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="font-heading text-3xl font-bold text-white md:text-5xl">
                 40%+
               </span>
-              <span className="text-sm text-[#B0B0B0]">In apparel returns</span>
+              <span className="text-xs text-[#B0B0B0] md:text-sm">In apparel returns</span>
             </div>
-            <div className="flex flex-col items-center gap-1">
-              <span className="font-heading text-5xl font-bold text-white">
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="font-heading text-3xl font-bold text-white md:text-5xl">
                 $B+
               </span>
-              <span className="text-sm text-[#B0B0B0]">
+              <span className="text-xs text-[#B0B0B0] md:text-sm">
                 Lost to missed deadlines
               </span>
             </div>
-            <div className="flex flex-col items-center gap-1">
-              <span className="font-heading text-5xl font-bold text-white">
+            <div className="flex flex-col items-center gap-1 text-center">
+              <span className="font-heading text-3xl font-bold text-white md:text-5xl">
                 100%
               </span>
-              <span className="text-sm text-[#B0B0B0]">Free to use</span>
+              <span className="text-xs text-[#B0B0B0] md:text-sm">Free to use</span>
             </div>
           </div>
 
           {/* Testimonials */}
-          <div className="flex w-full gap-6">
+          <div className="flex w-full flex-col gap-6 md:flex-row">
             {/* Testimonial 1 */}
-            <div className="flex flex-1 flex-col gap-5 rounded-xl bg-[#1A1A1A] p-8">
+            <div className="flex flex-1 flex-col gap-5 rounded-xl bg-[#1A1A1A] p-6 md:p-8">
               <p className="text-base text-white">
                 &quot;I ordered three shoe sizes to find the right fit for my
                 daughter. Trackable reminded me 3 days before the return window
@@ -401,7 +401,7 @@ export default function LandingPage() {
             </div>
 
             {/* Testimonial 2 */}
-            <div className="flex flex-1 flex-col gap-5 rounded-xl bg-[#1A1A1A] p-8">
+            <div className="flex flex-1 flex-col gap-5 rounded-xl bg-[#1A1A1A] p-6 md:p-8">
               <p className="text-base text-white">
                 &quot;I wanted to exchange my laptop but couldn&apos;t find clear
                 instructions anywhere. Trackable&apos;s agent explained the policy
@@ -423,7 +423,7 @@ export default function LandingPage() {
             </div>
 
             {/* Testimonial 3 */}
-            <div className="flex flex-1 flex-col gap-5 rounded-xl bg-[#1A1A1A] p-8">
+            <div className="flex flex-1 flex-col gap-5 rounded-xl bg-[#1A1A1A] p-6 md:p-8">
               <p className="text-base text-white">
                 &quot;Finally something that just works. Connected my Gmail, and
                 within minutes I could see all my orders organized with return
@@ -448,19 +448,19 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="w-full bg-[#EFF6FF] px-16 py-24">
+      <section className="w-full bg-[#EFF6FF] px-4 py-16 md:px-16 md:py-24">
         <div className="flex flex-col items-center gap-8">
-          <div className="flex w-[700px] flex-col items-center gap-6">
-            <h2 className="text-center font-heading text-[40px] font-bold text-[#0D0D0D]">
+          <div className="flex w-full max-w-[700px] flex-col items-center gap-6 text-center">
+            <h2 className="font-heading text-3xl font-bold text-[#0D0D0D] md:text-[40px]">
               Stop losing money on missed returns
             </h2>
-            <p className="text-center text-lg text-[#7A7A7A]">
+            <p className="text-base text-[#7A7A7A] md:text-lg">
               Join smart shoppers who let their AI agent handle post-purchase
               chaos. Free to use, no credit card required.
             </p>
             <Link
               href="/app"
-              className="flex items-center gap-2 rounded bg-[#3B82F6] px-7 py-3.5 text-base font-medium text-white hover:bg-[#2563EB] transition-colors"
+              className="flex w-full items-center justify-center gap-2 rounded bg-[#3B82F6] px-7 py-3.5 text-base font-medium text-white hover:bg-[#2563EB] transition-colors sm:w-auto"
             >
               <Mail className="h-4 w-4" />
               Get Started with Gmail
@@ -473,12 +473,12 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="w-full bg-[#FAFAFA] px-16 py-16">
+      <footer className="w-full bg-[#FAFAFA] px-4 py-12 md:px-16 md:py-16">
         <div className="flex flex-col gap-12">
           {/* Footer Top */}
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-8 md:flex-row md:justify-between">
             {/* Brand */}
-            <div className="flex w-[300px] flex-col gap-4">
+            <div className="flex w-full max-w-[300px] flex-col gap-4">
               <Link href="/" className="flex items-center gap-2.5">
                 <Image
                   src="/logo.svg"
@@ -491,14 +491,14 @@ export default function LandingPage() {
                   Trackable
                 </span>
               </Link>
-              <p className="w-[280px] text-sm text-[#7A7A7A]">
+              <p className="w-full text-sm text-[#7A7A7A]">
                 Your personal AI agent for post-purchase. Track orders, never miss
                 returns, get proactive help.
               </p>
             </div>
 
             {/* Links */}
-            <div className="flex gap-16">
+            <div className="flex flex-wrap gap-8 md:gap-16">
               {/* Product */}
               <div className="flex flex-col gap-4">
                 <span className="text-xs font-semibold tracking-[0.5px] text-[#0D0D0D]">
@@ -595,7 +595,7 @@ export default function LandingPage() {
           </div>
 
           {/* Footer Bottom */}
-          <div className="flex items-center justify-between border-t border-[#E8E8E8] pt-6">
+          <div className="flex flex-col items-center gap-4 border-t border-[#E8E8E8] pt-6 md:flex-row md:justify-between">
             <span className="text-[13px] text-[#7A7A7A]">
               &copy; 2026 Trackable. All rights reserved.
             </span>

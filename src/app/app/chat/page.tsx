@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import type { UIMessage } from "ai";
+import type { UIMessage, FileUIPart } from "ai";
 import { DefaultChatTransport } from "ai";
 import { Suspense, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -17,6 +17,11 @@ type ChatDataTypes = {
 
 type AppUIMessage = UIMessage<unknown, ChatDataTypes>;
 
+interface MessageImage {
+  url: string;
+  mediaType?: string;
+}
+
 function getMessageContent(message: AppUIMessage): string {
   if (!message.parts || message.parts.length === 0) {
     return "";
@@ -27,6 +32,19 @@ function getMessageContent(message: AppUIMessage): string {
     )
     .map((part) => part.text)
     .join("");
+}
+
+function getMessageImages(message: AppUIMessage): MessageImage[] {
+  if (!message.parts) return [];
+  return message.parts
+    .filter(
+      (part): part is FileUIPart =>
+        part.type === "file" && part.mediaType.startsWith("image/"),
+    )
+    .map((part) => ({
+      url: part.url,
+      mediaType: part.mediaType,
+    }));
 }
 
 function getMessageSuggestions(message: AppUIMessage): Suggestion[] {
@@ -134,16 +152,24 @@ ${trackingLine}What would you like to know?`;
         ? defaultSuggestions
         : [];
 
-  const handleSend = (content: string) => {
-    if (content.trim()) {
+  const handleSend = (content: string, files?: FileList) => {
+    const hasText = content.trim().length > 0;
+    const hasFiles = files && files.length > 0;
+    if (!hasText && !hasFiles) return;
+
+    if (hasText && hasFiles) {
+      sendMessage({ text: content, files });
+    } else if (hasFiles) {
+      sendMessage({ files });
+    } else {
       sendMessage({ text: content });
     }
   };
 
   return (
-    <div className="flex h-[calc(100vh-56px)] flex-col px-10 py-8 lg:h-screen">
+    <div className="flex h-[calc(100dvh-56px)] flex-col p-4 md:px-10 md:py-8 lg:h-screen">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-[#E8E8E8] pb-6">
+      <div className="flex items-center gap-3 border-b border-[#E8E8E8] pb-4 md:pb-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EFF6FF]">
           <Sparkles className="h-5 w-5 text-[#3B82F6]" />
         </div>
@@ -168,19 +194,21 @@ ${trackingLine}What would you like to know?`;
       )}
 
       {/* Messages */}
-      <div ref={scrollAreaRef} className="flex-1 overflow-y-auto py-6">
+      <div ref={scrollAreaRef} className="flex-1 overflow-y-auto py-4 md:py-6">
         <div className="space-y-6">
           {messages.map((message) => {
             const content =
               message.id === "welcome"
                 ? welcomeText
                 : getMessageContent(message);
-            if (!content) return null;
+            const images = getMessageImages(message);
+            if (!content && images.length === 0) return null;
             return (
               <ChatMessage
                 key={message.id}
                 role={message.role === "user" ? "user" : "agent"}
                 content={content}
+                images={images.length > 0 ? images : undefined}
                 userAvatarUrl={userAvatarUrl}
               />
             );

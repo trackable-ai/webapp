@@ -8,6 +8,8 @@ export const maxDuration = 30;
 interface MessagePart {
   type: string;
   text?: string;
+  mediaType?: string;
+  url?: string;
 }
 
 interface Message {
@@ -15,6 +17,13 @@ interface Message {
   content?: string;
   parts?: MessagePart[];
 }
+
+type OpenAIContent =
+  | string
+  | Array<
+      | { type: "text"; text: string }
+      | { type: "image_url"; image_url: { url: string } }
+    >;
 
 export async function POST(request: Request) {
   return withAuth(async (user) => {
@@ -31,14 +40,41 @@ export async function POST(request: Request) {
 
       // Convert Vercel AI SDK message format to OpenAI format
       const openaiMessages = messages.map((msg) => {
-        // Extract text content from parts if present (Vercel AI SDK format)
-        const content =
-          msg.parts
-            ?.filter((p) => p.type === "text")
-            .map((p) => p.text)
-            .join("") ||
-          msg.content ||
-          "";
+        const textParts = msg.parts?.filter((p) => p.type === "text") || [];
+        const imageParts =
+          msg.parts?.filter(
+            (p) =>
+              p.type === "file" &&
+              p.mediaType?.startsWith("image/") &&
+              p.url,
+          ) || [];
+
+        const textContent =
+          textParts.map((p) => p.text).join("") || msg.content || "";
+
+        // Use multimodal content format when images are present
+        let content: OpenAIContent;
+        if (imageParts.length > 0) {
+          const parts: Array<
+            | { type: "text"; text: string }
+            | { type: "image_url"; image_url: { url: string } }
+          > = [];
+
+          if (textContent) {
+            parts.push({ type: "text", text: textContent });
+          }
+
+          for (const part of imageParts) {
+            parts.push({
+              type: "image_url",
+              image_url: { url: part.url! },
+            });
+          }
+
+          content = parts;
+        } else {
+          content = textContent;
+        }
 
         return {
           role: msg.role as "system" | "user" | "assistant",
@@ -47,7 +83,10 @@ export async function POST(request: Request) {
       });
 
       // Filter out empty messages
-      const validMessages = openaiMessages.filter((msg) => msg.content.trim());
+      const validMessages = openaiMessages.filter((msg) => {
+        if (typeof msg.content === "string") return msg.content.trim();
+        return Array.isArray(msg.content) && msg.content.length > 0;
+      });
 
       if (validMessages.length === 0) {
         return new Response(JSON.stringify({ error: "No valid messages" }), {
